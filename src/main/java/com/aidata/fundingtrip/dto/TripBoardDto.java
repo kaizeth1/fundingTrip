@@ -11,8 +11,8 @@ public class TripBoardDto {
     private String ttitle;
     private String tcontents;
     private int tpeople;
-    private int tstart;
-    private int tend;
+    private String tstart;
+    private String tend;
     private String tstatus;
     private String tpic;
     private String tsysname;
