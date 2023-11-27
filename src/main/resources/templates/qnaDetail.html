@@ -6,6 +6,7 @@
     <title>Customer Service Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
@@ -23,30 +24,46 @@
     </style>
 </head>
 <body class="bg-gray-100">
+<header class="border-b py-4">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <div class="font-bold text-xl">Funding Trip</div>
+            <div class="font-bold text-xl">✈️</div>
+        </div>
+        <div class="hidden md:flex items-center space-x-1">
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">나의 펀딩 목록</a>
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">My Page</a>
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">고객센터</a>
+            <a href="#" class="py-4 px-2 text-gray-700 hover:text-gray-900">로그아웃</a>
+        </div>
+    </div>
 <div class="min-h-screen flex flex-col items-center justify-center">
     <div class="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full">
         <div class="flex items-center space-x-4 mb-6">
             <img src="https://unsplash.com/photos/5NLCaz2wJXE/download?force=true&w=640" alt="Customer Service" class="w-16 h-16 rounded-full">
             <h1 class="text-2xl font-semibold">고객센터</h1>
         </div>
+
         <form id="complaintForm" class="space-y-4">
             <div>
-                <label for="title" class="block text-sm font-medium text-gray-700">제목 내용 선택</label>
+                <label for="title" class="block text-sm font-medium text-gray-700" id="min">제목</label>
                 <div class="mt-1 flex rounded-md shadow-sm">
-                    <input type="text" name="title" id="title" class="form-input flex-1 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300" placeholder="Title">
-                    <input type="text" name="titleContent" id="titleContent" class="form-input flex-1 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300" placeholder="Title content">
+                    <input type="text" name="title" id="title" class="form-input flex-1 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300" placeholder="제목을 입력하세요.">
                 </div>
             </div>
             <div>
-                <label for="reason" class="block text-sm font-medium text-gray-700">Reason for complaint</label>
+                <label for="reason" class="block text-sm font-medium text-gray-700">민원 사유</label>
                 <div class="mt-1">
-                    <input type="text" name="reason" id="reason" class="form-input block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Write a reason">
+                    <input type="text" name="reason" id="reason" class="form-input block w-full sm:text-sm border-gray-300 rounded-md" placeholder="민원 사유를 작성해주세요.">
                 </div>
             </div>
             <div>
-                <label for="detail" class="block text-sm font-medium text-gray-700">Detail</label>
+                <label for="detail" class="block text-sm font-medium text-gray-700">내용</label>
                 <div class="mt-1">
-                    <textarea id="detail" name="detail" rows="4" class="form-textarea block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Enter more details here..."></textarea>
+                    <textarea id="detail" name="detail" rows="4" class="form-textarea block w-full sm:text-sm border-gray-300 rounded-md" placeholder="내용을 작성해주세요."></textarea>
                 </div>
             </div>
             <div class="flex items-center justify-between">
