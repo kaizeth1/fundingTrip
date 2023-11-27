@@ -7,7 +7,7 @@ drop table if exists qreply;
 
 
 create table if not exists member(
-	mid VARCHAR(20) NOT NULL PRIMARY KEY,
+	mid VARCHAR(20) binary not NULL PRIMARY KEY,
     mpw varchar(20) not null,
     mph varchar(20) not null,
     memail varchar(20) not null,
@@ -27,7 +27,7 @@ create table if not exists hisboard(
 
 create table if not exists tboard(
 	tnum int auto_increment not null primary key,
-    tmid varchar(20) not null,
+    tmid varchar(20) binary not null,
     ttitile varchar(50) not null,
     tcontents varchar(5000) not null,
     tpeople int not null,
@@ -42,7 +42,7 @@ create table if not exists tboard(
 
 create table if not exists qboard(
 	qnum int auto_increment not null primary key,
-    qmid varchar(20) not null,
+    qmid varchar(20) binary not null,
     qtitle varchar(50) not null,
     qcategory varchar(20) not null,
     qcontents varchar(5000),
@@ -53,18 +53,30 @@ create table if not exists qboard(
 
 create table if not exists treply(
 	trnum int auto_increment not null primary key,
-    trmid varchar(20) not null,
+    trbnum int not null,
+    trmid varchar(20) binary not null,
     trcontents varchar(200),
     trdate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     constraint fk_trmid foreign key(trmid)
-    references member(mid)
+    references member(mid),
+     constraint fk_trbnum foreign key(trbnum)
+    references tboard(tnum)
 );
 
 create table if not exists qreply(
 	qrnum int auto_increment not null primary key,
-    qrmid varchar(20) not null,
+    qrbnum int not null,
+    qrmid varchar(20) binary not null,
     qrcontents varchar(200),
     qrdate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     constraint fk_qrmid foreign key(qrmid)
-    references member(mid)
+    references member(mid),
+    constraint fk_qrbnum foreign key(qrbnum)
+    references qboard(qnum)
 );
+
+commit;
+
+update member set mgrade = '관리자' where mid = 'admin1';
+
+rollback;
