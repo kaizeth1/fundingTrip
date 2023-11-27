@@ -18,13 +18,7 @@ public class BoardController {
 	@Autowired
 	private BoardService bServ;
 
-	//메인 화면
-	@GetMapping("/")
-	public ModelAndView home(ListDto list, HttpSession session) {
-		log.info("home()");
 
-		return mv;
-	}
 
 	//마이 페이지
 	@GetMapping("myPage")
