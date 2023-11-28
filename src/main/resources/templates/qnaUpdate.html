@@ -1,60 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wireframe Design</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Additional styles if needed */
+        /* 추후 스타일 추가 */
     </style>
 </head>
 <body class="bg-white text-gray-800">
-
 <!-- Header -->
 <header class="bg-gray-100 p-4 shadow-md">
     <div class="container mx-auto flex justify-between items-center">
-        <div class="text-xl font-bold">Logo</div>
+        <a th:href="" class="flex items-center py-4 px-2">
+            <span class="header-logo text-blue-600 text-2xl">✈️ Funding Trip</span>
+        </a>
         <nav>
             <ul class="flex space-x-4">
-                <li><a href="#" class="hover:text-gray-500">menu1</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu2</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu3</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu4</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu5</a></li>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">나의 펀딩 목록</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">My Page</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">고객센터</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">로그아웃</a>
             </ul>
         </nav>
     </div>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+        })
+    </script>
 </header>
-
 <!-- Main Content -->
 <main class="container mx-auto p-8">
     <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold mb-2">Title</h1>
-        <p class="text-lg text-gray-600">Text Box</p>
+        <h1 class="text-3xl font-bold mb-2">고객센터</h1>
     </div>
 
     <section class="max-w-2xl mx-auto">
         <div class="bg-gray-200 p-6 rounded-lg shadow-lg mb-6">
-            <h2 class="text-2xl font-semibold mb-4">고객센터</h2>
-            <p class="text-gray-700 mb-6">나의 문의</p>
+            <h2 class="text-2xl font-semibold mb-4"></h2>
+            <p class="text-gray-700 mb-6">문의 사유</p>
+            <input type="text" style="width: 640px">
             <div class="border-t border-b border-gray-300 py-4">
-                <h3 class="text-xl mb-2">제목</h3>
-                <p class="text-gray-600 mb-4">문의에 대한 답변</p>
-                <p class="text-gray-600 mb-4">문의 사유</p>
-                <p class="text-gray-600 mb-4">문의 상세</p>
+                <p class="text-gray-600 mb-4">문의 내용</p>
+                <input type="text" style="width: 640px">
             </div>
             <div class="flex justify-between mt-6">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">수정 완료</button>
+                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"><a th:href="@{qnaList}"> 수정 완료</a></button>
 
-                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">뒤로가기</button>
+                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"><a th:href="@{qnaDetail}">뒤로가기</a></button>
             </div>
         </div>
     </section>
 </main>
 
 <script>
-    // JavaScript if needed
+    // 나중에 추가
 </script>
 </body>
 </html>

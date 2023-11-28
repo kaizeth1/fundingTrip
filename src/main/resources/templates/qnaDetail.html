@@ -14,47 +14,67 @@
 <!-- Header -->
 <header class="bg-gray-100 p-4 shadow-md">
     <div class="container mx-auto flex justify-between items-center">
-        <div class="text-xl font-bold">Logo</div>
+        <a th:href="" class="flex items-center py-4 px-2">
+            <span class="header-logo text-blue-600 text-2xl">✈️ Funding Trip</span>
+        </a>
         <nav>
             <ul class="flex space-x-4">
-                <li><a href="#" class="hover:text-gray-500">menu1</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu2</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu3</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu4</a></li>
-                <li><a href="#" class="hover:text-gray-500">menu5</a></li>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">나의 펀딩 목록</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">My Page</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">고객센터</a>
+                <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">로그아웃</a>
             </ul>
         </nav>
     </div>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+        })
+    </script>
 </header>
-
 <!-- Main Content -->
 <main class="container mx-auto p-8">
     <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold mb-2">Title</h1>
-        <p class="text-lg text-gray-600">Text Box</p>
+        <h1 class="text-3xl font-bold mb-2">고객센터</h1>
     </div>
 
     <section class="max-w-2xl mx-auto">
         <div class="bg-gray-200 p-6 rounded-lg shadow-lg mb-6">
-            <h2 class="text-2xl font-semibold mb-4">고객센터</h2>
-            <p class="text-gray-700 mb-6">나의 문의</p>
+            <p class="text-gray-600 mb-4">문의 사유</p>
             <div class="border-t border-b border-gray-300 py-4">
-                <h3 class="text-xl mb-2">제목</h3>
-                <p class="text-gray-600 mb-4">문의에 대한 답변</p>
-                <p class="text-gray-600 mb-4">문의 사유</p>
-                <p class="text-gray-600 mb-4">문의 상세</p>
+                <p class="text-gray-600 mb-4">문의 내용</p>
             </div>
             <div class="flex justify-between mt-6">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">수정 완료</button>
-
-                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">뒤로가기</button>
+                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" id="upbtn" >수정</button>
+                <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" id="delbtn">삭제</button>
+                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" id="backbtn">뒤로가기</button>
             </div>
         </div>
     </section>
 </main>
 
 <script>
-    // JavaScript if needed
+    $("#backbtn").click(function () {
+        let url = "/qnaList?";
+
+    $("#delbtn").click(function () {
+        let con = confirm("게시글을 삭제합니다.");
+        if(con == true){
+            let qnum = [[${board.q_num}]];
+            location.href = `/qnaDelete?q_num=${qnum}`;
+        }
+    });
+    $("#upbtn").click(function () {
+        let qnum = [[${board.q_num}]];
+        location.href = `/updateForm?q_num=${qnum}`;
+    })
+    });
 </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +28,14 @@
             background-color: #0056b3;
         }
     </style>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+        })
+    </script>
 </head>
 <body class="bg-white text-gray-800">
 <nav class="bg-white shadow-md py-4">
@@ -56,32 +64,62 @@
 <div class="max-w-6xl mx-auto mt-10 px-5">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="col-span-2">
-            <img src = "static/images/Gw.png" alt="광성보">
-            <div class="mt-4">
-                <h2 class="text-2xl font-bold main-category">광성보</h2>
-                <p class="mt-2 text-gray-600">새로운 사람들과 광성보로 떠나는 새로운 방식을 경험하세요.</p>
-                <button class="payment-button mt-4" onclick="openPaymentWindow()">결제</button>
+            <div class="detail-title">포스터</div>
+            <div class="detail-content">
+                <th:block th:if="${tboard.msysname} == null">
+                    <img class="poster" th:src="@{/images/no_image.jpg}">
+                </th:block>
+                <th:block th:unless="${tboard.msysname} == null">
+                    <img class="poster" th:src="${'upload/'+tboard.msysname}">
+                </th:block>
             </div>
-        </div>
         <div class="md:col-span-1">
             <div class="bg-gray-100 p-4 rounded-lg shadow-md">
-                <h3 class="text-xl font-bold">프로젝트 일정</h3>
-                <ul class="mt-4">
-                    <li>목표 금액을 모아서 특별한 여행을 떠나보세요.</li>
-                    <li>01시 20분 - 유적지 여행 상품을 이용하고 특산물도 구경하세요.</li>
-                    <li>03시 00분 - 휴양지에서 가장 가치있는 맞춤형 여행을 느껴보세요.</li>
-                    <li>05시 00분 - 휴양지에서 즐기는 특별한 경험과 디너를 즐겨보세요!</li>
-                </ul>
+                <div class="text-xl font-bold">게시글번호</div>
+                <div class="mt-4" th:text="${tboard.tnum}"></div>
+                </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">작성자</div>
+                <div class="detail-content" th:text="${tboard.tmid}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">트립 제목</div>
+                <div class="detail-content" th:text="${tboard.ttitle}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">트립 컨텐츠</div>
+                <div class="detail-content" th:text="${tboard.tcontents}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">모집인원</div>
+                <div class="detail-content" th:text="${tboard.tpeople}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">여행시작</div>
+                <div class="detail-content" th:text="${tboard.tstart}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">여행종료</div>
+                <div class="detail-content" th:text="${tboard.tend}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">모집상태</div>
+                <div class="detail-content" th:text="${tboard.tstatus}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">포토</div>
+                <div class="detail-content" th:text="${tboard.tpic}"></div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+                <div class="text-xl font-bold">sysname</div>
+                <div class="detail-content" th:text="${tboard.tsysname}"></div>
+            </div>
+            <div><button class="payment-button mt-4" onclick="openPaymentWindow()">결제</button>
+            </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    function openPaymentWindow() {
-        // Placeholder for payment window functionality
-        alert('Payment window will open.');
-    }
-</script>
 </body>
 </html>
