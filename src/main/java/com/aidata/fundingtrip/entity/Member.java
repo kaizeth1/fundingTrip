@@ -15,6 +15,9 @@ public class Member {
     private String mpw;
 
     @Column(nullable = false, length = 20)
+    private String mname;
+
+    @Column(nullable = false, length = 20)
     private String mph;
 
     @Column(nullable = false, length = 20)
