@@ -1,8 +1,8 @@
 package com.aidata.fundingtrip.dao;
 
 import com.aidata.fundingtrip.dto.MemberDto;
-import jakarta.servlet.http.HttpSession;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface MemberDao {
@@ -11,7 +11,11 @@ public interface MemberDao {
     String selectPassword(String mid);
     MemberDto selectMember(String mid);
 
-    String memberUpdate(MemberDto member, HttpSession session);//회원정보 수정
+    //String memberUpdate(MemberDto member, HttpSession session);
 
-    void drawMember(String sessionId);//회원탈퇴
+    void drawMember(String sessionId);
+
+    void memberUpdate(MemberDto member);
+
+    String serchId(@Param("memail") String memail, @Param("mname") String mname);
 }

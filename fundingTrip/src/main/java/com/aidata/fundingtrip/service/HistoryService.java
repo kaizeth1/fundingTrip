@@ -29,22 +29,21 @@ public class HistoryService {
     MemberDao mDao;
     @Autowired
     private HisDao hDao;
-
-    //트랜젝션 관련 객체 선언
     @Autowired
     private PlatformTransactionManager manager;
     @Autowired
     private TransactionDefinition definition;
 
-    private int lCnt = 5;//페이지 기본 값
+    private int lcnt = 5;
 
-    public ModelAndView getHisList(ListDto ldto, HttpSession session) {
+    public ModelAndView getHisList(ListDto ldto,
+                                   HttpSession session) {
         log.info("getHisList()");
         ModelAndView mv = new ModelAndView();
         //데이터베이스에서 글 가져오기
         int num = ldto.getPageNum();
         if (ldto.getListCnt() == 0) {
-            ldto.setListCnt(lCnt);
+            ldto.setListCnt(lcnt);
         }
         //PageNum을 시작 번호로 변경
         ldto.setPageNum((num - 1) * ldto.getListCnt());
@@ -58,7 +57,7 @@ public class HistoryService {
 
 
         //페이지 번호와 검색 관련 내용을 세션에 저장
-        if(ldto.getColname() != null){
+        if (ldto.getColname() != null) {
             session.setAttribute("ldto", ldto);
         } else {
             //검색이 아닐 때는 제거
@@ -104,13 +103,19 @@ public class HistoryService {
                            RedirectAttributes rttr) {
         log.info("hisWrite()");
 
-        TransactionStatus status =
-                manager.getTransaction(definition);
+        TransactionStatus status = manager.getTransaction(definition);
 
         String view = null;
         String msg = null;
 
         try {
+            if (hdto.getHisname() == null || hdto.getHisname().isEmpty()) {
+                // 유적지 이름이 없을 경우 사용자에게 메시지 전달
+                msg = "유적지 이름을 입력하세요.";
+                rttr.addFlashAttribute("msg", msg);
+                return "redirect:hisWrite";
+            }
+
             //글 내용 저장.
             hDao.saveHistory(hdto);
             //log.info("게시글 번호 : " + hdto.gethisnum());
@@ -119,7 +124,7 @@ public class HistoryService {
             fileUpload(files, session, hdto.getHisnum());
 
             manager.commit(status);//최종 승인
-            view = "redirect:/hisList?pageNum=1";
+            view = "redirect:hisList?pageNum=1";
             msg = "작성 성공";
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,6 +132,7 @@ public class HistoryService {
             view = "redirect:hisWrite";
             msg = "작성 실패";
         }
+
         rttr.addFlashAttribute("msg", msg);
 
         return view;
@@ -160,7 +166,7 @@ public class HistoryService {
             }
 
             HisFileDto hfd = new HisFileDto();
-            hfd.setHf_bnum(hisnum);//게시글 번호 저장.
+            hfd.setHf_hisnum(hisnum);//게시글 번호 저장.
             hfd.setHf_oriname(oriname);//원래 파일명 저장.
             String sysname = System.currentTimeMillis()
                     + oriname.substring(oriname.lastIndexOf("."));
@@ -186,11 +192,90 @@ public class HistoryService {
         mv.addObject("hisboard", hisboard);
 
         //게시글의 파일목록 가져오기
-        List<HisFileDto> bfList = hDao.selectHisFileList(hisnum);
-        mv.addObject("bfList", bfList);
+        List<HisFileDto> hfList = hDao.selectFileList(hisnum);
+        mv.addObject("hfList", hfList);
 
         mv.setViewName("hisDetail");
 
         return mv;
+    }
+
+    public String deleteHis(int hisnum,
+                            HttpSession session,
+                            RedirectAttributes rttr) {
+        log.info("deleteHis()");
+
+        //트랜젝션
+        TransactionStatus status =
+                manager.getTransaction(definition);
+
+        String view = null;
+        String msg = null;
+
+        try {
+            //0. 파일 삭제 목록 구하기
+            List<String> hList = hDao.selectHnameList(hisnum);
+
+            //2. 게시글 삭제
+            hDao.deleteHis(hisnum);
+
+            manager.commit(status);
+
+            view = "redirect:hisList?pageNum=1";
+            msg = "삭제 성공";
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            manager.rollback(status);
+
+            view = "redirect:hisDetail?hisnum=" + hisnum;
+            msg = "삭제 실패";
+        }
+        rttr.addFlashAttribute("msg", msg);
+        return view;
+    }
+
+    public ModelAndView hisUpdate(int hisnum) {
+        log.info("hisUpdate()");
+        ModelAndView mv = new ModelAndView();
+        //게시글 내용 가져오기
+        HistoryBoardDto hdto = hDao.selectHis(hisnum);
+        //mv에 담기
+        mv.addObject("hdto", hdto);
+        //템플릿 지정.
+        mv.setViewName("hisUpdate");
+        return mv;
+    }
+
+    public String updateHis(List<MultipartFile> files,
+                            HistoryBoardDto hdto,
+                            HttpSession session,
+                            RedirectAttributes rttr) {
+
+        log.info("updateHis()");
+
+        TransactionStatus status =
+                manager.getTransaction(definition);
+
+        String view = null;
+        String msg = null;
+
+        try {
+            hDao.updateHis(hdto); // 여기에 매개변수를 전달하도록 확인하세요
+            fileUpload(files, session, hdto.getHisnum());
+
+            manager.commit(status);
+            view = "redirect:boardDetail?hisnum="
+                    + hdto.getHisnum();
+            msg = "수정 성공";
+        } catch (Exception e) {
+            e.printStackTrace();
+            manager.rollback(status);
+            view = "redirect:updateForm?hisnum="
+                    + hdto.getHisnum();
+            msg = "수정 실패";
+        }
+        rttr.addFlashAttribute("msg", msg);
+        return view;
     }
 }

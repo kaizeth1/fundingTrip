@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site Name</title>
+    <title>글쓰기</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/jquery-3.7.1.min.js"></script>
     <script th:inline="javascript">
@@ -45,8 +45,8 @@
     <div class="min-h-screen flex flex-col items-center justify-center">
         <div class="w-full max-w-4xl p-5">
             <h1 class="text-3xl font-bold mb-6">유적지 글쓰기</h1>
-    <form th:action="@{hiswriteProc}" method="post"
-          enctype="multipart/form-data">
+            <form id="wfrm" th:action="@{hiswriteProc}" method="post"
+                  enctype="multipart/form-data">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
             </div>
         <div class="border p-4">
@@ -68,49 +68,36 @@
                 <textarea id="hisexplan" name="hisexplan" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
             </div>
             <div class="border p-4">
-                <label for="hisinfo" class="block text-sm font-medium text-gray-700">이용 안내:</label>
+                <label for="hisinfo" class="block text-sm font-medium text-gray-700">시설 안내:</label>
                 <textarea id="hisinfo" name="hisinfo" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
             </div>
         <div class="btn-area">
-            <button type="submit" class="btn-write" id="okbtn" value="글쓰기" >글쓰기</button>
-            <button type="button" class="btn-write" id="backbtn" value="뒤로가기">뒤로가기</button>
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700  ml-auto mt-2" id="okbtn" value="글쓰기" >글쓰기</button>
+            <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700  ml-auto mt-2" id="backbtn" value="뒤로가기">뒤로가기</button>
+            <div>
+            </div>
         </div>
-    </form>
+        </form>
+        </div>
+    </div>
+</main>
 <footer>
     <th:block th:insert="~{fragments::footer}" />
 </footer>
 </body>
 <script th:inline="javascript">
-        //파일명 처리용 함수
-        // $("#hispic").on("change", function () {
-        //     //파일 선택창에서 업로드할 파일을 선택한 다음
-        //     //'열기' 버튼을 누르면 change 이벤트가 발생.
-        //     //console.log($("#file"));
-        //     let files = $("#hispic")[0].files;
-        //     console.log(files);
-        //
-        //     let fileName = "";//출력할 문장 저장 변수
-        //
-        //     if(files.length > 1){
-        //         fileName = `${files[0].name} 외 ${files.length - 1}개`;
-        //     } else if(files.length == 1){
-        //         fileName = files[0].name;
-        //     } else {
-        //         fileName = "파일선택";
-        //     }
-        //     $(".pic-name").val(fileName);
-        // });
 
     $("#backbtn").click(function () {
         let url = "/hisList?";
 
-        const listDto = [[${session.ldto}]];
+        const ListDto = [[${session.ldto}]];
         let colname = "";
         let keyword = "";
-        if(listDto != null){
-            colname = listDto.colname;
-            keyword = listDto.keyword;
+        if(ListDto != null){
+            colname = ListDto.colname;
+            keyword = ListDto.keyword;
         }
+
         let page = [[${session.pageNum}]];
 
         if(colname == null || colname == ""){//검색 안한 목록 이동
@@ -121,33 +108,5 @@
         console.log(url);
         location.href = url;
     });
-        // $("#okbtn").click(function (event) {
-        //     let url = "/hisList?";
-        //
-        //     const wfrm = new FormData($("#wfrm")[0]);  // FormData 객체 생성
-        //
-        //     // 파일 필드를 'files'로 추가
-        //     const files = $("#hispic")[0].files;
-        //     for (let i = 0; i < files.length; i++) {
-        //         wfrm.append('files', files[i]);
-        //     }
-        //
-        //     // 기존에 파일명 처리용 함수가 있으므로 추가 확인 작업이 필요한지 확인해보세요.
-        //
-        //     $.ajax({
-        //         url: "hiswriteProc",
-        //         type: "POST",
-        //         data: wfrm,
-        //         processData: false,
-        //         contentType: false,
-        //         success: function (res) {
-        //             console.log(res);
-        //             // 추가적으로 필요한 로직을 여기에 작성
-        //         },
-        //         error: function (err) {
-        //             console.log(err);
-        //         }
-        //     });
-        // });
 </script>
 </html>

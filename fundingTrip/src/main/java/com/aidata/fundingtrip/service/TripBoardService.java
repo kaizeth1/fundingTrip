@@ -24,8 +24,6 @@ public class TripBoardService {
 
     @Autowired
     private BoardDao bDao;
-    @Autowired
-    private MemberDao mDao;
 
     @Autowired
     private PlatformTransactionManager manager;
@@ -146,16 +144,6 @@ public class TripBoardService {
             bDao.insertFundFile(tfDto);
         }
     }
-
-
-
-
-
-
-
-
-
-
     public ModelAndView getFund(int tnum, HttpSession session, TripBoardDto tDto) {
         log.info("getFund");
         ModelAndView mv = new ModelAndView();
@@ -177,4 +165,68 @@ public class TripBoardService {
         return mv;
     }
 
+    public String deleteTripBoard(int tnum, HttpSession session, RedirectAttributes rttr){
+        log.info("deleteBoard()");
+
+        //트랜젝션
+        TransactionStatus status = manager.getTransaction(definition);
+
+        String view = null;
+        String msg = null;
+
+        try {
+            //파일 삭제 목록 구하기
+            List<String> fList = bDao.selectTFnameList(tnum);
+
+            bDao.deleteTripFiles(tnum);
+            bDao.deleteTreplays(tnum);
+            bDao.deleteTripBoard(tnum);
+
+            //파일 삭제 처리
+            if (fList.size() != 0){
+                deleteTripFiles(fList, session);
+            }
+
+            manager.commit(status);
+
+            view = "redirect:fundList?pageNum=1";
+            msg = "삭제 성공";
+        }catch (Exception e){
+            e.printStackTrace();
+
+            manager.rollback(status);
+
+            view = "redirect:detailFund?tnum=" + tnum;
+            msg = "삭제 실패";
+        }
+        rttr.addFlashAttribute("msg", msg);
+        return view;
+    }
+
+    private void deleteTripFiles(List<String> fList, HttpSession session) throws Exception{
+        log.info("deleteTripFiles()");
+        //파일 위치
+        String realPath = session.getServletContext().getRealPath("/");
+        realPath += "FundUpload/";
+
+        for (String sn : fList){
+            File file = new File(realPath + sn);
+            if (file.exists() == true){
+                file.delete();
+            }
+        }
+    }
+
+    public TripReplyDto treplyInsert(TripReplyDto treply) {
+        log.info("replyInsert()");
+
+        try {
+            bDao.insertTreply(treply);
+            treply = bDao.selectLastTreply(treply.getTrnum());
+        }catch (Exception e){
+            e.printStackTrace();
+            treply = null;
+        }
+        return treply;
+    }
 }

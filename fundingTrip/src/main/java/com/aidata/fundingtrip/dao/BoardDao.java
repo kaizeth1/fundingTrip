@@ -40,4 +40,16 @@ public interface BoardDao {
     List<TripBoardFileDto> selectTripFileList(int tnum);//게시글 번호에 해당하는 파일목록을 가져오는 메소드
 
     List<TripReplyDto> selectTripReplyList(int tnum);//게시글 번호에 해당하는 댓글목록을 가져오는 메소드
+
+    List<String> selectTFnameList(int tnum);
+
+    void deleteTripFiles(int tnum);
+
+    void deleteTreplays(int tnum);
+
+    void deleteTripBoard(int tnum);
+
+    void insertTreply(TripReplyDto treply);
+
+    TripReplyDto selectLastTreply(int trnum);
 }

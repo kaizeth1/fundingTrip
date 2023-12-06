@@ -40,7 +40,6 @@
 	<th:block th:insert="~{fragments::header(${session.member})}"/>
 </header>
 <section>
-
 	<div class="min-h-screen flex flex-col items-center justify-center">
 		<div class="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full">
 			<div class="flex items-center space-x-4 mb-6">
@@ -49,8 +48,10 @@
 				<h1 class="text-2xl font-semibold">고객센터</h1>
 			</div>
 
+			<!--수정 폼-->
 			<form th:action="@{qnaUpdateProc}" id="complaintForm" class="space-y-4" enctype="multipart/form-data">
 				<div>
+					<input type="hidden" name="qmid" th:value="${session.member.mid}">
 					<label for="title" class="block text-sm font-medium text-gray-700" id="min">제목</label>
 					<div class="mt-1 flex rounded-md shadow-sm">
 						<input type="text" name="title" id="title"
@@ -58,6 +59,7 @@
 							   placeholder="제목을 입력하세요.">
 					</div>
 				</div>
+
 				<div>
 					<label for="reason" class="block text-sm font-medium text-gray-700">민원 사유</label>
 					<div class="mt-1">
@@ -66,6 +68,7 @@
 							   placeholder="민원 사유를 작성해주세요.">
 					</div>
 				</div>
+
 				<div>
 					<label for="detail" class="block text-sm font-medium text-gray-700">내용</label>
 					<div class="mt-1">
@@ -74,41 +77,39 @@
 							  placeholder="내용을 작성해주세요."></textarea>
 					</div>
 				</div>
+
+				<!--버튼 영역-->
 				<div class="flex items-center justify-between">
 					<button type="submit"
 							class="form-button inline-flex items-center px-4 py-2
 							border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600
 							hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							id="qnupbtn"><a th:href="@{qnaList}"> 수정 완료</a></button>
+							id="upbtn"><a th:href="@{qnaList}"> 수정 완료</a></button>
 					<button type="button"
 							class="form-button inline-flex items-center px-4 py-2
 							border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white
 							hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							id="qnbackbtn"><a th:href="@{qnaDetail}">뒤로가기</a></button>
+							id="backbtn"><a th:href="@{qnaDetail}">뒤로가기</a></button>
 				</div>
 			</form>
 		</div>
 	</div>
 </section>
-<footer>
+<footer class="bg-gray-100 p-4 text-center text-sm text-gray-500">
 	<th:block th:insert="~{fragments::footer}"/>
 </footer>
 </body>
 <script th:inline="javascript">
-    $("#qnbackbtn").click(function () {
-        let url = "/qnaList?";
-
-        const ListDto = [[${session.lDto}]];
-        let colname = "";
-        let keyword = "";
-        if (searchDto != null) {
-            colname = ListDto.colname;
-            keyword = ListDto.keyword;
-        }
+    //수정 버튼
+	$("#upbtn").click(function () {
+        let qnum = [[${qDto.qnum}]];
+        location.href = `/qnaUpdate?qnum=${qnum}`;
     });
-    $("#qnupbtn").click(function () {
-        let qnum = [[${qboard.qnum}]];
-        location.href = `/updateForm?q_num=${qnum}`;
-    })
+
+    //뒤로 가기 버튼
+    $("#backbtn").click(function () {
+        let qnum = [[${qDto.qnum}]];
+        location.href = `/qnaDetail?qnum=${qnum}`;
+    });
 </script>
 </html>

@@ -24,44 +24,43 @@
         <h1 class="text-2xl font-bold">마이페이지</h1>
         <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none">Logout</button>
     </div>
-    <form  th:object="${session.member}" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form th:object="${session.member}" th:action="@{/updateProc}" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" >
+            <label class="block text-gray-700 text-sm font-bold mb-2">
                 이름
             </label>
             <input th:value="*{mname}" id="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                    type="text" name="mname" >
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" >
+            <label class="block text-gray-700 text-sm font-bold mb-2">
                 아이디
             </label>
             <input th:value="*{mid}" id="id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   type="text" name="mid">
+                   type="text" name="mid" readonly="readonly"> <!-- 아이디는 읽기 전용으로 설정 -->
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" >
+            <label class="block text-gray-700 text-sm font-bold mb-2">
                 비밀번호
             </label>
             <input th:value="*{mpw}" id="pw" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                    type="password" name="mpw" >
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" >
+            <label class="block text-gray-700 text-sm font-bold mb-2">
                 연락처
             </label>
             <input th:value="*{mph}" id="ph" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                    type="text" name="mph" >
         </div>
         <div class="mb-6">
-            <label class="block text-gray-700 text-sm font-bold mb-2" >
+            <label class="block text-gray-700 text-sm font-bold mb-2">
                 E-Mail
             </label>
             <input th:value="*{memail}" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                    type="text" name="memail" >
         </div>
-    </form>
-    <form th:action="@{/updateProc}" method="post" class="flex items-center justify-between"  >
+        <!-- 수정 버튼을 폼 안으로 이동 -->
         <button type="submit" name="action" value="update" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             수정
         </button>

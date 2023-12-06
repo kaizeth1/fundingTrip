@@ -3,26 +3,28 @@ package com.aidata.fundingtrip.service;
 import com.aidata.fundingtrip.dao.MemberDao;
 import com.aidata.fundingtrip.dto.MemberDto;
 import jakarta.servlet.http.HttpSession;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Service
 @Slf4j
+@Transactional
 public class MemberService {
 
     @Autowired
     private TransactionDefinition definition;
+
     @Autowired
     private PlatformTransactionManager manager;
+
+
     @Autowired
     private MemberDao mDao;
 
@@ -53,7 +55,6 @@ public class MemberService {
         String encPwd = pEncoder.encode(member.getMpw());
         //암호화된 비밀번호를 다시 dto 객체에 저장
         member.setMpw(encPwd);
-
 
 
         try {
@@ -110,50 +111,71 @@ public class MemberService {
         session.invalidate();
         return "redirect:/";
     }
-    @Transactional
-    public String updateMember(MemberDto member,
-                               HttpSession session,
-                               RedirectAttributes rttr) {
-        log.info("UpdateMember()");
-
-        TransactionStatus status = manager.getTransaction(definition);
-        String view = null;
-        String msg = null;
-        String sessionId = (String)session.getAttribute(session.getId());
-        try {
-            //Objects.equals(member.getMid(), sessionId
-            // member.getMid() != null && !member.getMid().equals(sessionId)
-            if (!Objects.equals(member.getMid(), sessionId)) {
-                mDao.memberUpdate(member, session);
-                // manager.commit(status);
-                view = "redirect:/myPage?mid=" + member.getMid();
-                msg = "수정성공";
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            //  manager.rollback(status);
-            view = "redirect:/";
-            msg = "수정실패";
-        }
-
-        rttr.addFlashAttribute("msg",msg);
-        return view;
-    }
 
 
-    public ModelAndView updateMember(String mid) {
+//    @Transactional
+//    public String updateMember(MemberDto member, HttpSession session, RedirectAttributes rttr) {
+//        log.info("UpdateMember()");
+//
+//        TransactionStatus status = manager.getTransaction(definition);
+//        String view = null;
+//        String msg = null;
+//        String mid = member.getMid();
+//        MemberDto sessionMember = (MemberDto) session.getAttribute("member");
+//
+//
+//
+//        log.info("세션에서 가져온 회원 정보: {}", sessionMember);
+//        log.info("mid: {}, sessionMember.getMid(): {}", mid, sessionMember.getMid());
+//        try {
+//            if ( mid == null ){
+//            //(sessionMember != null && Objects.equals(mid, sessionMember.getMid())) {
+//                // 세션에서 가져온 회원 정보의 mid와 전달된 mid가 일치하는지 확인
+//                // && mid.equals(sessionMember.getMid())
+//                member.setMid(mid); // mid 설정
+//                log.info("mDao.memberUpdate 호출 전");
+//                mDao.memberUpdate(member,session);
+//                log.info("mDao.memberUpdate 호출 후");
+//
+//                view = "redirect:/myPage?mid=" + mid;
+//                msg = "수정성공";
+//                log.info("수정 실행됨");
+//            } else {
+//                // 세션에 로그인 정보가 없거나 mid가 일치하지 않는 경우
+//                view = "redirect:/";
+//                msg = "수정 실패: 권한이 없습니다.";
+//                log.info("수정 실패: 권한이 없습니다.");
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            view = "redirect:/";
+//            msg = "수정실패";
+//            log.info("수정실패");
+//        } finally {
+//            if (status != null && !status.isCompleted()) {
+//                if (status.isRollbackOnly()) {
+//                    manager.rollback(status);
+//                } else {
+//                    manager.commit(status);
+//                }
+//            }
+//        }
+//
+//        rttr.addFlashAttribute("msg", msg);
+//        return view;
+//    }
+
+
+    public ModelAndView selMember(String mid) {
         log.info("updateMember");
         ModelAndView mv = new ModelAndView();
         MemberDto member = mDao.selectMember(mid);
 
-        mv.addObject("member",member);
+        mv.addObject("member", member);
         mv.setViewName("myPage");
         return mv;
     }
-
-
-
 
 
     public String drawMember(HttpSession session, RedirectAttributes rttr) {
@@ -184,4 +206,36 @@ public class MemberService {
         rttr.addFlashAttribute("msg", msg);
         return view;
     }
+
+
+    public void updateMember(MemberDto member) {
+        log.info("updateMember");
+        mDao.memberUpdate(member);
+
+    }
+
+    public String findIdByEmailAndName(String memail, String mname) {
+        String foundId = mDao.serchId(memail, mname);
+        return foundId;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

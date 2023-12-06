@@ -47,13 +47,13 @@
 			<div class="flex items-center space-x-4 mb-6">
 				<img src="https://unsplash.com/photos/5NLCaz2wJXE/download?force=true&w=640" alt="Customer Service"
 					 class="w-16 h-16 rounded-full">
-				<h1 class="text-2xl font-semibold">고객센터</h1>
+				<h1 class="text-2xl font-semibold">문의하기</h1>
 			</div>
 
 			<form th:action="@{qnaWriteProc}" id="complaintForm" class="space-y-4" method="post" enctype="multipart/form-data">
 				<div>
 					<input type="hidden" name="qmid" th:value="${session.member.mid}">
-					<label for="title" class="block text-sm font-medium text-gray-700" id="min">제목</label>
+					<label for="title" class="block text-sm font-medium text-gray-700" id="qtitle">제목</label>
 					<div class="mt-1 flex rounded-md shadow-sm">
 						<input type="text" name="qtitle" id="title"
 							   class="form-input flex-1 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300"
@@ -79,7 +79,6 @@
 					</div>
 				</div>
 
-				<!--flex items-center justify-between-->
 				<div class="btn-area">
 					<button type="submit"
 							class="form-button inline-flex items-center px-4 py-2 border border-transparent text-sm
@@ -104,28 +103,27 @@
 <footer class="bg-gray-100 p-4 text-center text-sm text-gray-500">
 	<th:block th:insert="~{fragments::footer}"/>
 </footer>
-
 </body>
-<!--<script th:inline="javascript">-->
-<!--    $("#backbtn").click(function () {-->
-<!--        let url = "/qnaList?";-->
-<!--        const searchDto = [[${session.search}]];-->
-<!--        let colname = "";-->
-<!--        let keyword = "";-->
-
-<!--        if (searchDto != null) {-->
-<!--            colname = searchDto.colname;-->
-<!--            keyword = searchDto.keyword;-->
-<!--        }-->
-
-<!--        let page = [[${session.pageNum}]]-->
-<!--        if (colname == null || colname == "")-->
-<!--            url += `pageNum=[[${session.pageNum}]]`;//검색 안한 목록 이동-->
-<!--        else-->
-<!--            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`//검색 결과 목록으로 이동-->
-
-<!--        console.log(url);-->
-<!--        location.href = url;-->
-<!--    });-->
-<!--</script>-->
+<script th:inline="javascript">
+    // $("#backbtn").click(function () {
+    //     let url = "/qnaList?";
+    //     const searchDto = [[${session.search}]];
+    //     let colname = "";
+    //     let keyword = "";
+	//
+    //     if (searchDto != null) {
+    //         colname = searchDto.colname;
+    //         keyword = searchDto.keyword;
+    //     }
+	//
+    //     let page = [[${session.pageNum}]]
+    //     if (colname == null || colname == "")
+    //         url += `pageNum=[[${session.pageNum}]]`;//검색 안한 목록 이동
+    //     else
+    //         url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`//검색 결과 목록으로 이동
+	//
+    //     console.log(url);
+    //     location.href = url;
+    // });
+</script>
 </html>

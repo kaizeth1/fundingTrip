@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class HistoryBoardDto {
@@ -14,4 +17,6 @@ public class HistoryBoardDto {
     private String hisexplan;
     private String hisinfo;
     private String hissysname;
+
+    private List<HisFileDto> hisFileList;
 }

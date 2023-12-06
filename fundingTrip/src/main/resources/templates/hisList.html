@@ -4,76 +4,105 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Site Name</title>
-	<script src="https://cdn.tailwindcss.com"></script>
+	<!-- Tailwind CSS CDN 추가 -->
+	<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 	<script src="js/jquery-3.7.1.min.js"></script>
 	<script th:inline="javascript">
 		$(function () {
 			let m = [[${msg}]];
 			if (m != null) alert(m);
-
 		})
 	</script>
 </head>
-<body class="bg-white text-gray-800">
-<header><th:block th:insert="~{fragments::header(${session.member})}"/></header>
+<body class="bg-gray-100 text-gray-800 font-sans">
+<!-- 헤더 영역 -->
+<header>
+	<th:block th:insert="~{fragments::header(${session.member})}" />
+</header>
+<!-- 메인 내용 영역 -->
 <main class="py-8">
-	<div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-		<div>
-			<input type="text" id="keyword">
-			<button id="search">검색</button>
+		<!-- 검색 및 작성 버튼 영역 -->
+		<div class="mb-4">
+			<select id="sel" class="p-2 border border-gray-300 rounded">
+				<option value="hisname" selected>
+					유적지 이름
+				</option>
+			</select>
+			<input type="text" id="keyword" class="p-2 border border-gray-300 rounded">
+			<button id="search" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+				검색
+			</button>
 		</div>
-		<div class="border p-4" th:if="${hitem != null}">
-			<img th:src="@{/path/to/your/images/{hispic}(hisnum=${hitem.hisnum})}" alt="유적지 이미지">
-			<div class="text-center mt-4" th:text="${hitem.hisname}">유적지 이름</div>
-		</div>
-	</div>
-	<div >
-		<th:block th:if="${#lists.isEmpty(hList)}">
-			<div style="width: 100%">
-				게시글이 없습니다.
+		<!-- 게시글 목록 영역 -->
+		<div class="data-area">
+			<div class="title-row bg-gray-200 font-bold grid grid-cols-1 md:grid-cols-4 p-2">
+				<div class="t-no text-center">번호</div>
+				<div class="t-pic text-center">사진</div>
+				<div class="t-title text-center">유적지 이름</div>
+				<div class="t-local text-center">위치</div>
 			</div>
-		</th:block>
-		<th:block th:unless="${#lists.isEmpty(hList)}">
-			<th:block th:each="hitem:${hList}">
-				<div th:if="${hitem != null}" th:text="${hitem.hisnum}"></div>
-				<div>
-					<a th:href="@{hisDetail(hisnum=${hitem.hisnum})}" th:text="${hitem.hisname}"></a>
-				</div>
-				<div th:text="${hitem.hisname}"></div>
-				<!--					<img th:src="@{/path/to/your/images/{hispic}(hisnum=${hitem.hisnum})}" alt="유적지 이미지" />-->
-			</th:block>
-		</th:block>
+			<div class="data-row grid grid-cols-1 md:grid-cols-4 gap-8 p-2">
+				<th:block th:if="${#lists.isEmpty(hList)}">
+					<div class="text-center w-full p-4 col-span-4">
+						게시글이 없습니다.
+					</div>
+				</th:block>
+				<th:block th:unless="${#lists.isEmpty(hList)}">
+					<th:block th:each="hitem : ${hList}">
+						<div class="t-no p-2 text-center" th:text="${hitem.hisnum}"></div>
+						<div class="t-pic text-center">
+							<th:block th:each="hfile : ${hitem.hisFileList}">
+								<img th:src="@{/uploads/{fileName}(fileName=${hfile.hf_sysname})}" alt="사진" width="50" height="50" class="rounded">
+							</th:block>
+						</div>
+						<div class="t-title p-2 text-center">
+							<a th:href="@{hisDetail(hisnum=${hitem.hisnum})}" th:text="${hitem.hisname}" class="text-indigo-600 hover:underline"></a>
+						</div>
+						<!-- 위치 정보를 표시하는 열 추가 -->
+						<div class="t-local p-2 text-center" th:text="${hitem.hisloca}"></div>
+					</th:block>
+				</th:block>
+			</div>
+		</div>
+	<div id="write-form">
+	<button id="write" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700  ml-auto mt-2">
+		유적지 작성하기
+	</button>
 	</div>
-	<div class="btn-area">
-		<!-- 페이지 번호 및 글 쓰기 버튼		-->
-		<div class="paging" th:utext="${paging}"></div>
-		<button class="wr-btn" id="write">
-			글쓰기
-		</button>
-	</div>
-	</div>
+		<!-- 페이징 및 작성 버튼 영역 -->
+		<div class="btn-area col-span-2">
+			<div class="paging text-center my-4" th:utext="${paging}"></div>
+		</div>
 </main>
+<!-- 푸터 영역 -->
 <footer>
 	<th:block th:insert="~{fragments::footer}" />
 </footer>
-</body>
+
 <script>
 	$("#search").click(function () {
-		//사용자가 입력한 검색 키워드를 가져온다.
 		let keyword = $("#keyword").val();
 		if (keyword == "") {
 			alert("검색어를 입력하세요.");
 			return;
 		}
 		let select = $("#sel").val();
-		//검색용 uri 생성 및 실행(location.href)
 		location.href = `/hisList?colname=${select}&keyword=${keyword}&pageNum=1`;
 	});
+
+	// $("#write-form").hide();
+	// let m = [[${session.member}]];
+	// if(m != null){
+	// 	let grade = m.mgrade; // 등급이 관리자인 사람만 보인다
+	// 	if (grade == '관리자') {
+	// 		$("#write-form").show();
+	// 	}
+	// }
+
 	$("#write").click(function () {
 		location.href = "/hisWrite";
 	});
-	function redirectToHisDetail(hisnum) {
-		location.href = "/hisDetail?hisnum=" + hisnum;
-	}
+
 </script>
+</body>
 </html>

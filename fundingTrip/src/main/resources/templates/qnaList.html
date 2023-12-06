@@ -26,7 +26,11 @@
 <section>
 	<div class="content">
 		<div class="board-form">
-
+			<div class="user-info">
+				<div class="user-info-sub" th:object="${session.member}">
+					<p th:text=" '[' +*{mid}+ '] 님' "></p>
+				</div>
+			</div>
 			<h2 class="login-header">고객 센터</h2>
 			<div class="search-area">
 				<select id="sel">

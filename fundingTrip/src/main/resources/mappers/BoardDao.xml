@@ -27,6 +27,7 @@
         INSERT INTO tboardfile
         VALUES (NULL,#{tftnum},#{toriname},#{tsysname})
     </insert>
+    <insert id="insertTreply"></insert>
 
     <update id="updateQnABoard" parameterType="com.aidata.fundingtrip.dto.QnABoardDto">
         UPDATE qboard
@@ -45,6 +46,15 @@
         DELETE
         FROM qboard
         WHERE qnum = #{qnum}
+    </delete>
+    <delete id="deleteTripFiles" parameterType="String">
+        DELETE FROM tboardfile WHERE tsysname=#{sysname}
+    </delete>
+    <delete id="deleteTreplays">
+        DELETE FROM reply WHERE r_bnum=#{b_num}
+    </delete>
+    <delete id="deleteTripBoard">
+
     </delete>
 
     <select id="selectQnABoard" resultType="com.aidata.fundingtrip.dto.QnABoardDto" parameterType="Integer">
@@ -94,5 +104,11 @@
     <select id="selectQnABoardList" resultType="com.aidata.fundingtrip.dto.QnABoardDto">
         SELECT * FROM qboard
         LIMIT #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectTFnameList" resultType="java.lang.String" parameterType="Integer">
+        SELECT tsysname FROM tboardFile WHERE tftnum=#{tnum}
+    </select>
+    <select id="selectLastTreply" resultType="com.aidata.fundingtrip.dto.TripReplyDto">
+
     </select>
 </mapper>
