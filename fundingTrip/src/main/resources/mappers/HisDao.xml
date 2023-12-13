@@ -22,6 +22,12 @@
     <delete id="deleteHis" parameterType="Integer">
         DELETE FROM hisboard WHERE hisnum=#{hisnum}
     </delete>
+    <delete id="deleteFile" parameterType="String">
+        DELETE FROM hisfile WHERE hF_SYSNAME=#{sysname}
+    </delete>
+    <delete id="deleteFiles" parameterType="Integer">
+        DELETE FROM hisfile WHERE hf_hisnum=#{hisnum}
+    </delete>
     <select id="selectHistory" resultType="com.aidata.fundingtrip.dto.HistoryBoardDto"
             parameterType="integer">
         SELECT * FROM hisboard WHERE hisnum=#{hisnum}
@@ -41,20 +47,13 @@
             WHERE #{colname} LIKE CONCAT('%',#{keyword},'%')
         </if>
     </select>
-    <select id="selectHisFileList" resultType="com.aidata.fundingtrip.dto.HisFileDto"
-            parameterType="integer">
-        SELECT * FROM hisfile WHERE hF_hisnum=#{hisnum}
-    </select>
-    <select id="selectHis" resultType="com.aidata.fundingtrip.dto.HistoryBoardDto"
-    parameterType="integer">
-        SELECT * FROM hisboard WHERE hisnum=#{hisnum}
-    </select>
     <select id="selectHnameList" resultType="String"
         parameterType="Integer">
-        SELECT hf_sysname FROM hisfile WHERE hF_hisnum=#{hisnum}
+        SELECT hF_SYSNAME FROM hisfile WHERE hF_hisnum=#{hisnum}
     </select>
     <select id="selectFileList" resultType="com.aidata.fundingtrip.dto.HisFileDto"
-    parameterType="Integer">
-        SELECT hf_sysname FROM hisfile WHERE hF_hisnum=#{hisnum}
+            parameterType="Integer">
+        SELECT * FROM hisfile WHERE hF_hisnum=#{hisnum}
     </select>
+
 </mapper>

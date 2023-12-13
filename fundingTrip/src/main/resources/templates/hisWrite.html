@@ -22,16 +22,12 @@
                 let fileName = "";
 
                 if(files.length > 1){//하나 이상의 파일을 선택했을 경우
-                    fileName = files[0].name + " 외 "
-                        + (files.length - 1) + "개";
-                }
-                else if(files.length == 1) {
+                    fileName = `${files[0].name} 외 ${files.length - 1}개`;
+                } else if(files.length == 1) {
                     fileName = files[0].name;
-                }
-                else {//파일 선택 창에서 '취소' 버튼을 클릭
+                } else {//파일 선택 창에서 '취소' 버튼을 클릭
                     fileName = "파일선택";
                 }
-
                 $(".upload-name").val(fileName);
             });
         });
@@ -52,7 +48,6 @@
         <div class="border p-4">
             <label for="hispic">사진 업로드:</label>
             <input type="file" id="hispic" name="files" multiple>
-<!--            <input type="text" class="pic-name" value="파일선택" readonly>-->
         </div>
         <div class="border p-4">
             <label for="hisname" class="block text-sm font-medium text-gray-700">유적지 이름:</label>

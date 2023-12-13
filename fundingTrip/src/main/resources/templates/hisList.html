@@ -23,23 +23,26 @@
 <main class="py-8">
 		<!-- 검색 및 작성 버튼 영역 -->
 		<div class="mb-4">
-			<select id="sel" class="p-2 border border-gray-300 rounded">
+			<select id="sel" class="p-2 border border-gray-300 rounded mr-2">
 				<option value="hisname" selected>
 					유적지 이름
 				</option>
+				<option value="hisloca" selected>
+					위치
+				</option>
 			</select>
-			<input type="text" id="keyword" class="p-2 border border-gray-300 rounded">
-			<button id="search" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+			<input type="text" id="keyword" class="p-2 border border-gray-300 rounded mr-2">
+			<button id="search" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
 				검색
 			</button>
 		</div>
 		<!-- 게시글 목록 영역 -->
 		<div class="data-area">
-			<div class="title-row bg-gray-200 font-bold grid grid-cols-1 md:grid-cols-4 p-2">
+			<div class="title-row bg-gray-200 font-bold grid grid-cols-1 md:grid-cols-4 p-2 gap-8">
 				<div class="t-no text-center">번호</div>
-				<div class="t-pic text-center">사진</div>
 				<div class="t-title text-center">유적지 이름</div>
 				<div class="t-local text-center">위치</div>
+				<div class="t-local text-center">이용 안내</div>
 			</div>
 			<div class="data-row grid grid-cols-1 md:grid-cols-4 gap-8 p-2">
 				<th:block th:if="${#lists.isEmpty(hList)}">
@@ -47,39 +50,41 @@
 						게시글이 없습니다.
 					</div>
 				</th:block>
-				<th:block th:unless="${#lists.isEmpty(hList)}">
-					<th:block th:each="hitem : ${hList}">
-						<div class="t-no p-2 text-center" th:text="${hitem.hisnum}"></div>
-						<div class="t-pic text-center">
-							<th:block th:each="hfile : ${hitem.hisFileList}">
-								<img th:src="@{/uploads/{fileName}(fileName=${hfile.hf_sysname})}" alt="사진" width="50" height="50" class="rounded">
-							</th:block>
+				<th:block th:if="${not #lists.isEmpty(hList)}">
+					<th:block th:each="fitem : ${hList}">
+						<div class="hisnum p-2 text-center" th:text="${fitem.hisnum}">
 						</div>
-						<div class="t-title p-2 text-center">
-							<a th:href="@{hisDetail(hisnum=${hitem.hisnum})}" th:text="${hitem.hisname}" class="text-indigo-600 hover:underline"></a>
+						<div class="hisname p-2 text-center">
+							<a th:href="@{hisDetail(hisnum=${fitem.hisnum})}" th:text="${fitem.hisname}" class="text-indigo-600 hover:underline"></a>
 						</div>
-						<!-- 위치 정보를 표시하는 열 추가 -->
-						<div class="t-local p-2 text-center" th:text="${hitem.hisloca}"></div>
+						<div class="hisloca p-2 text-center" th:text="${fitem.hisloca}"></div>
+						<div class="hisinfo p-2 text-center" th:text="${fitem.hisinfo}"></div>
 					</th:block>
 				</th:block>
-			</div>
-		</div>
-	<div id="write-form">
-	<button id="write" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700  ml-auto mt-2">
+				<button id="write" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
 		유적지 작성하기
 	</button>
-	</div>
 		<!-- 페이징 및 작성 버튼 영역 -->
-		<div class="btn-area col-span-2">
-			<div class="paging text-center my-4" th:utext="${paging}"></div>
+				<div class="btn-area col-span-4 flex justify-center items-center mt-4">
+					<div class="paging text-center my-4" th:utext="${paging}"></div>
+				</div>
+			</div>
 		</div>
 </main>
-<!-- 푸터 영역 -->
 <footer>
 	<th:block th:insert="~{fragments::footer}" />
 </footer>
 
-<script>
+<script th:inline="javascript">
+	$("#write").hide();
+	let m = [[${session.member}]];
+	if(m != null){
+		let grade = m.mgrade; // 등급이 관리자인 사람만 보인다
+		if (grade == '관리자') {
+			$("#write").show();
+		}
+	}
+
 	$("#search").click(function () {
 		let keyword = $("#keyword").val();
 		if (keyword == "") {
@@ -90,19 +95,9 @@
 		location.href = `/hisList?colname=${select}&keyword=${keyword}&pageNum=1`;
 	});
 
-	// $("#write-form").hide();
-	// let m = [[${session.member}]];
-	// if(m != null){
-	// 	let grade = m.mgrade; // 등급이 관리자인 사람만 보인다
-	// 	if (grade == '관리자') {
-	// 		$("#write-form").show();
-	// 	}
-	// }
-
 	$("#write").click(function () {
 		location.href = "/hisWrite";
 	});
-
 </script>
 </body>
 </html>

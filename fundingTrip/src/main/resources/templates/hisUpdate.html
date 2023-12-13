@@ -1,46 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Writing Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>수정 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="js/jquery-3.7.1.min.js"></script>
-    <style>
-        /* Additional styles if needed */
-    </style>
 </head>
-<body class="bg-white text-gray-800">
-<header><th:block th:insert="~{fragments::header(${session.member})}"/> </header>
-<div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Writing Page</h1>
-    <form>
-        <div class="mb-4">
-            <label for="photo-upload" class="block text-lg font-medium text-gray-700 mb-2">Upload Photo</label>
-            <input id="photo-upload" type="file" class="block w-full text-sm text-gray-900
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-violet-50 file:text-violet-700
-                  hover:file:bg-violet-100"/>
-        </div>
-        <div class="mb-4">
-            <label for="title" class="block text-lg font-medium text-gray-700 mb-2">Title</label>
-            <input id="title" type="text" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Enter your title here">
-        </div>
-        <div class="mb-4">
-            <label for="content" class="block text-lg font-medium text-gray-700 mb-2">Content</label>
-            <textarea id="content" rows="6" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Write your content here"></textarea>
-        </div>
-        <div class="flex justify-between">
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">Submit</button>
-            <button type="button" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">Delete</button>
-            <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">Back</button>
-        </div>
-    </form>
-</div>
-<script>
-    // JavaScript if needed
+<body class="bg-white text-gray-800 font-sans">
+<header>
+    <div th:insert="~{fragments::header(${session.member})}" class="container mx-auto py-4"></div>
+</header>
+<section class="py-8">
+    <div class="container mx-auto">
+        <form th:action="@{hisupdateProc}" class="write-form" method="post" enctype="multipart/form-data">
+            <h2 class="text-3xl font-bold mb-4">유적지 수정</h2>
+            <input type="hidden" name="hisnum" th:value="${hdto.hisnum}">
+            <textarea class="write-input w-full mb-4" name="hisname" autofocus placeholder="유적지 이름" required th:text="${hdto.hisname}"></textarea>
+            <textarea class="write-input w-full mb-4" name="hisloca" autofocus placeholder="위치" required th:text="${hdto.hisloca}"></textarea>
+            <textarea class="write-input w-full mb-4" name="hisexplan" autofocus placeholder="설명" required th:text="${hdto.hisexplan}"></textarea>
+            <textarea class="write-input w-full mb-4" name="hisinfo" autofocus placeholder="시설 안내" required th:text="${hdto.hisinfo}"></textarea>
+            <div class="filebox">
+                <div id="hfile" class="mb-4">
+                    <th:block th:if="${#lists.isEmpty(hfList)}">
+                        <label style="width: 100%">첨부파일 없음</label>
+                    </th:block>
+                    <th:block th:unless="${#lists.isEmpty(hfList)}">
+                        <th:block th:each="fitem:${hfList}">
+                            <label style="width: 100%"
+                                   th:sysname="${fitem.hf_sysname}"
+                                   th:onclick="del(this.getAttribute('sysname'))"
+                                   th:text="${fitem.hf_oriname}"></label>
+                        </th:block>
+                    </th:block>
+                </div>
+                <label for="file" class="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded">파일추가</label>
+                <input type="file" id="file" name="files" multiple class="hidden">
+            </div>
+            <div class="flex justify-end">
+                <button class="btn-write bg-green-500 text-white rounded-md px-6 py-2 mr-2" id="upbtn">수정</button>
+                <button class="btn-sub bg-gray-300 text-gray-800 rounded-md px-6 py-2" id="backbtn">뒤로가기</button>
+            </div>
+        </form>
+    </div>
+</section>
+<script th:inline="javascript">
+
+    $("#backbtn").click(function () {
+        location.href = `/hisDelete?hisnum=${hisnum}`;
+
+        const ListDto = [[${session.ldto}]];
+        let colname = "";
+        let keyword = "";
+        if(ListDto != null){
+            colname = ListDto.colname;
+            keyword = ListDto.keyword;
+        }
+
+        let page = [[${session.pageNum}]];
+
+        if(colname == null || colname == ""){//검색 안한 목록 이동
+            url += `pageNum=${page}`;
+        } else {//검색한 결과 목록으로 이동.
+            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`;
+        }
+        //console.log(url);
+        location.href = url;
+    });
+
+    //파일 제목 처리
+    $("#file").on("change", function () {
+        let files = $("#file")[0].files;
+        console.log(files);
+
+        let fileName = "";//출력할 문장 저장 변수
+
+        if(files.length > 1){
+            fileName = `${files[0].name} 외 ${files.length - 1}개`;
+        } else if(files.length == 1){
+            fileName = files[0].name;
+        } else {
+            fileName = "파일선택";
+        }
+        $(".upload-name").val(fileName);
+    });
+
+    function del(sysname) {
+        console.log(sysname);
+        let cfm = confirm("해당 파일을 삭제하시겠습니까?");
+        if(cfm == false){
+            return;// 취소.
+        }
+
+        let sendObj = {"hf_sysname" : sysname};
+        sendObj.hf_hisnum = [[${hdto.hisnum}]];
+        console.log(sendObj);
+
+        $.ajax({
+            url: "delFile",
+            type: "post",
+            data: sendObj,
+            success: function (res){
+                console.log(res.length);
+                //res.length == 0, res.length > 0
+                let flist = "";
+                if(res.length == 0){
+                    flist += '<label style="width: 100%">첨부파일 없음</label>';
+                } else {
+                    for(let f of res){
+                        flist += `<label style="width: 100%"
+                                         onclick="del('${f.hf_sysname}')">
+                                         ${f.hf_oriname}</label>`;
+                    }
+                }
+                $("#hfile").html(flist);
+            },
+            error: function (err) {
+                console.log(err);
+                alert("파일 삭제에 실패했습니다.");
+            }
+        });
+    }
 </script>
 </body>
 </html>
