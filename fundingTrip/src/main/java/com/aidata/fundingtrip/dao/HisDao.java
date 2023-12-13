@@ -9,23 +9,37 @@ import java.util.List;
 
 @Mapper
 public interface HisDao {
-    void saveHistory(HistoryBoardDto hDto);
-    void historyFile(HisFileDto hfd);
-    HistoryBoardDto selectHistory(int hisnum);
-    //전체 게시글 개수 구하는 메소드
     List<HistoryBoardDto> selectHisList(ListDto ldto);
+
+    //전체 개시글 개수 구하는 메소드
+    int selectHisCnt(ListDto ldto);
+
     //게시글 저장 메소드
-   int selectHisCnt(ListDto ldto);
-    //게시글 번호에 해당하는 파일 목록을 가져오는 메소드
-    List<HisFileDto> selectHisFileList(int hisnum);
+    void saveHistory(HistoryBoardDto hDto);
 
-    List<String> selectHnameList(int hisnum);
+    //파일 정보 저장 메소드
+    void historyFile(HisFileDto hfd);
 
-    HistoryBoardDto selectHis(int hisnum);
+    //게시글 하나만 가져오는 메소드
+    HistoryBoardDto selectHistory(int hisnum);
 
-    void updateHis(HistoryBoardDto hdto);
+    //게시글 번호에 해당하는 파일목록을 가져오는 메소드
+    List<HisFileDto> selectFileList(int hisnum);
 
+    //게시글 번호에 해당하는 파일목록 삭제 메소드
+    void deleteFiles(int hisnum);
+
+    //게시글 번호에 해당하는 게시글 삭제 메소드
     void deleteHis(int hisnum);
 
-    List<HisFileDto> selectFileList(int hisnum);
+    //파일 저장 이름 목록 구하는 메소드
+    List<String> selectHnameList(int hisnum);
+
+    //수정시 단독 파일 삭제
+    void deleteFile(String hfSysname);
+
+    //게시글 수정 메소드
+    void updateHis(HistoryBoardDto hdto);
+
+
 }

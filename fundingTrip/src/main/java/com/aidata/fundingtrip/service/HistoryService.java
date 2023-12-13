@@ -76,7 +76,7 @@ public class HistoryService {
         //전체 글개수 구하기(from DB)
         int maxNum = hDao.selectHisCnt(ldto);
         //페이지에 보여질 번호 개수
-        int pageCnt = 4;
+        int pageCnt = 5;
         String listName = "hisList?";
         if (ldto.getColname() != null) {
             listName += "colname=" + ldto.getColname()
@@ -168,13 +168,13 @@ public class HistoryService {
             HisFileDto hfd = new HisFileDto();
             hfd.setHf_hisnum(hisnum);//게시글 번호 저장.
             hfd.setHf_oriname(oriname);//원래 파일명 저장.
-            String sysname = System.currentTimeMillis()
+            String hF_SYSNAME = System.currentTimeMillis()
                     + oriname.substring(oriname.lastIndexOf("."));
             //air.jpg -> 1212412413.jpg
-            hfd.setHf_sysname(sysname);
+            hfd.setHf_sysname(hF_SYSNAME);
 
             //파일 저장(upload폴더에...)
-            File file = new File(realPath + sysname);
+            File file = new File(realPath + hF_SYSNAME);
             //......./.../.../webapp/upload/1212412413.jpg
             mf.transferTo(file);//하드디스크에 저장.
 
@@ -213,11 +213,19 @@ public class HistoryService {
         String msg = null;
 
         try {
-            //0. 파일 삭제 목록 구하기
+            // 파일 삭제 목록 구하기
             List<String> hList = hDao.selectHnameList(hisnum);
 
-            //2. 게시글 삭제
+            //1. 파일목록 삭제
+            hDao.deleteFiles(hisnum);
+
+            // 게시글 삭제
             hDao.deleteHis(hisnum);
+
+            //파일 삭제 처리
+            if(hList.size() != 0) {
+                deleteFiles(hList, session);
+            }
 
             manager.commit(status);
 
@@ -235,13 +243,37 @@ public class HistoryService {
         return view;
     }
 
+    private void deleteFiles(List<String> hList, HttpSession session)
+          throws Exception {
+            log.info("deleteFiles()");
+            //파일 위치
+            String realPath = session.getServletContext()
+                    .getRealPath("/");
+            realPath += "hisUpload/";
+
+            for(String sn : hList){
+                File file = new File(realPath + sn);
+                if(file.exists() == true){//파일 존재 확인 후
+                    file.delete();//파일 삭제
+                }
+            }
+        }
+
+
     public ModelAndView hisUpdate(int hisnum) {
         log.info("hisUpdate()");
         ModelAndView mv = new ModelAndView();
+
         //게시글 내용 가져오기
-        HistoryBoardDto hdto = hDao.selectHis(hisnum);
+        HistoryBoardDto hdto = hDao.selectHistory(hisnum);
+        //파일목록 가져오기
+        List<HisFileDto> hfList = hDao.selectFileList(hisnum);
+        //hisfile 목록 가져옥;
+//        List<HisFileDto> hfList = hDao.selectHisFileList(hisnum);
         //mv에 담기
         mv.addObject("hdto", hdto);
+        mv.addObject("hfList", hfList);
+//        mv.addObject("hfList", hfList);
         //템플릿 지정.
         mv.setViewName("hisUpdate");
         return mv;
@@ -265,17 +297,45 @@ public class HistoryService {
             fileUpload(files, session, hdto.getHisnum());
 
             manager.commit(status);
-            view = "redirect:boardDetail?hisnum="
+            view = "redirect:hisDetail?hisnum="
                     + hdto.getHisnum();
             msg = "수정 성공";
         } catch (Exception e) {
             e.printStackTrace();
             manager.rollback(status);
-            view = "redirect:updateForm?hisnum="
+            view = "redirect:hisUpdate?hisnum="
                     + hdto.getHisnum();
             msg = "수정 실패";
         }
         rttr.addFlashAttribute("msg", msg);
         return view;
+    }
+
+    public List<HisFileDto> delFile(HisFileDto hFile,
+                                      HttpSession session){
+        log.info("delFile()");
+        List<HisFileDto> fList = null;
+
+        //파일 경로 설정.
+        String realPath = session.getServletContext()
+                .getRealPath("/");
+        realPath += "hisUpload/" + hFile.getHf_sysname();
+
+        try {
+            //파일 삭제
+            File file = new File(realPath);
+            if(file.exists()){
+                if(file.delete()){
+                    //해당 파일 정보 삭제(DB)
+                    hDao.deleteFile(hFile.getHf_sysname());
+                    //나머지 파일 목록 다시 가져오기
+                    fList = hDao.selectFileList(hFile.getHf_hisnum());
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return fList;
     }
 }

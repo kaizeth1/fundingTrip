@@ -1,7 +1,6 @@
 package com.aidata.fundingtrip.service;
 
 import com.aidata.fundingtrip.dao.BoardDao;
-import com.aidata.fundingtrip.dao.MemberDao;
 import com.aidata.fundingtrip.dto.*;
 import com.aidata.fundingtrip.util.PagingUtil;
 import jakarta.servlet.http.HttpSession;
@@ -100,7 +99,7 @@ public class TripBoardService {
             fundFileUpload(files, session, tDto.getTnum());
 
             manager.commit(status);//최종승인
-            view = "redirect:fundList";
+            view = "redirect:fundList?pageNum=1";
             msg = "작성 완료";
 
         }catch (Exception e){
@@ -216,9 +215,72 @@ public class TripBoardService {
             }
         }
     }
+    public ModelAndView updateTripBoard(int tnum) {
+        log.info("updateBoard()");
+        ModelAndView mv = new ModelAndView();
+        //게시글 내용 가져오기
+        log.info("tnum 값"+ tnum);
+        TripBoardDto tDto = bDao.selectTripBoard(tnum);
 
+        // 파일목록 가져오기
+        List<TripBoardFileDto> tfList = bDao.selectTripFileList(tnum);
+        log.info("tflist 값" + tfList);
+        //mv에 담기
+        mv.addObject("tDto", tDto);
+        mv.addObject("tfList", tfList);
+        //템플릿 지정
+        mv.setViewName("fundUpdate");
+        return mv;
+    }
+
+    public List<TripBoardFileDto> delFile(TripBoardFileDto tbFile, HttpSession session){
+        log.info("delFile()");
+        List<TripBoardFileDto> fList = null;
+
+        //파일 경로 설정
+        String realPath = session.getServletContext().getRealPath("/");
+        realPath += "FundUpload/" + tbFile.getTsysname();
+        try {
+            //파일 삭제
+            File file = new File(realPath);
+            if (file.exists()){
+                if (file.delete()){
+                    //해당 파일정보 삭제(DB)
+                    bDao.deleteTripFile(tbFile.getTsysname());
+                    // 나머지 파일 목록 다시 가져오기
+                    fList= bDao.selectTripFileList(tbFile.getTftnum());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return fList;
+    }
+
+    public String updateTripBoard(List<MultipartFile> files, TripBoardDto tDto, HttpSession session, RedirectAttributes rttr){
+        log.info("updateBoard()");
+
+        TransactionStatus status = manager.getTransaction(definition);
+        String view = null;
+        String msg = null;
+
+        try {
+            bDao.updateTripBoard(tDto);
+            fundFileUpload(files, session, tDto.getTnum());
+            manager.commit(status);
+            view = "redirect:detailFund?tnum=" + tDto.getTnum();
+            msg = "수정 성공";
+        }catch (Exception e){
+            e.printStackTrace();
+            manager.rollback(status);
+            view = "redirect:fundUpdate?tnum=" + tDto.getTnum();
+            msg = "수정 실패";
+        }
+        rttr.addFlashAttribute("msg", msg);
+        return view;
+    }
     public TripReplyDto treplyInsert(TripReplyDto treply) {
-        log.info("replyInsert()");
+        log.info("treplyInsert()");
 
         try {
             bDao.insertTreply(treply);
@@ -228,5 +290,133 @@ public class TripBoardService {
             treply = null;
         }
         return treply;
+    }
+
+    public String updateStatus(TripBoardDto tDto, HttpSession session, RedirectAttributes rttr){
+        log.info("updateStatus()");
+
+        TransactionStatus status = manager.getTransaction(definition);
+        String view = null;
+        String msg = null;
+        try {
+            bDao.updateStatus(tDto);
+            manager.commit(status);//최종승인
+            view = "redirect:detailFund?tnum=" + tDto.getTnum();
+            msg = tDto.getTstatus() + "완료";
+        } catch (Exception e){
+            e.printStackTrace();
+            manager.rollback(status);//취소
+            view = "redirect:detailFund?tnum=" + tDto.getTnum();
+            msg = tDto.getTstatus() + "실패";
+        }
+        rttr.addFlashAttribute("msg", msg);
+        return view;
+    }
+
+    public ModelAndView getMyFundList(SearchDto sDto, HttpSession session) {
+        log.info("getMyFundList()");
+        ModelAndView mv = new ModelAndView();
+
+        // 세션에서 회원 정보 가져오기
+        MemberDto member = (MemberDto) session.getAttribute("member");
+
+        // 아이디를 SearchDto에 설정
+        sDto.setMid(member.getMid());
+
+        //DB에서 게시글 가져오기
+        int num = sDto.getPageNum();
+        if (sDto.getListCnt() == 0){
+            sDto.setListCnt(lCnt);
+        }
+        //pageNum을 LIMIT 시작 번호로 변경
+        sDto.setPageNum((num - 1) * sDto.getListCnt());
+        List<TripBoardDto> tList = bDao.selectMyTripBoardList(sDto);
+        //DB에서 가져온 데이터를 mv에 담기
+        mv.addObject("tList", tList);
+
+        //페이징 처리
+        sDto.setPageNum(num);//원래 페이지 번호로 환원
+        String pageHtml = getMyTPaging(sDto);
+        mv.addObject("paging", pageHtml);
+
+        // 페이지 번호와 검색 관련 내용을 세션에 저장
+        if (sDto.getColname() != null){
+            session.setAttribute("sDto", sDto);
+        } else {
+            //검색이 아닐 때는 제거
+            session.removeAttribute("sDto");
+        }
+        // 별개로 페이지 번호도 저장
+        session.setAttribute("pageNum", num);
+
+        mv.setViewName("myFundList");
+        return mv;
+    }
+
+    private String getMyTPaging(SearchDto sDto) {
+        String pageHtml = null;
+        int maxNum = bDao.selectMyTripBoardCnt(sDto);//전체 글 개수
+        int pageCnt = 5;//페이지 번호 5개
+        String listname = "myFundList?";
+
+        //검색 시의 url
+        if (sDto.getColname() != null)
+            listname += "colname" + sDto.getColname() + "&keyword" + sDto.getKeyword() + "&";
+
+        //페이징 처리용 객체 생성
+        PagingUtil paging = new PagingUtil(maxNum, sDto.getPageNum(), sDto.getListCnt(), pageCnt, listname);
+        pageHtml = paging.makePaging();
+
+        return pageHtml;
+    }
+
+    public ModelAndView getAllFundList(SearchDto sDto, HttpSession session) {
+        log.info("getAllFundList()");
+        ModelAndView mv = new ModelAndView();
+        //DB에서 게시글 가져오기
+        int num = sDto.getPageNum();
+        if (sDto.getListCnt() == 0){
+            sDto.setListCnt(lCnt);
+        }
+        //pageNum을 LIMIT 시작 번호로 변경
+        sDto.setPageNum((num - 1) * sDto.getListCnt());
+        List<TripBoardDto> tList = bDao.selectAllTripBoardList(sDto);
+        //DB에서 가져온 데이터를 mv에 담기
+        mv.addObject("tList", tList);
+
+        //페이징 처리
+        sDto.setPageNum(num);//원래 페이지 번호로 환원
+        String pageHtml = getAllTPaging(sDto);
+        mv.addObject("paging", pageHtml);
+
+        // 페이지 번호와 검색 관련 내용을 세션에 저장
+        if (sDto.getColname() != null){
+            session.setAttribute("sDto", sDto);
+        } else {
+            //검색이 아닐 때는 제거
+            session.removeAttribute("sDto");
+        }
+        // 별개로 페이지 번호도 저장
+        session.setAttribute("pageNum", num);
+
+        mv.setViewName("allFundList");
+        return mv;
+    }
+
+    private String getAllTPaging(SearchDto sDto) {
+        String pageHtml = null;
+        int maxNum = bDao.selectAllTripBoardCnt(sDto);//전체 글 개수
+        int pageCnt = 5;//페이지 번호 5개
+        String listname = "allFundList?";
+
+        //검색 시의 url
+        if (sDto.getColname() != null)
+            listname += "colname" + sDto.getColname() + "&keyword" + sDto.getKeyword() + "&";
+
+        //페이징 처리용 객체 생성
+        PagingUtil paging = new PagingUtil(maxNum, sDto.getPageNum(), sDto.getListCnt(), pageCnt, listname);
+        pageHtml = paging.makePaging();
+
+        return pageHtml;
     }
 }

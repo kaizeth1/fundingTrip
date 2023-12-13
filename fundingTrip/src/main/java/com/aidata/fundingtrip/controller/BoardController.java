@@ -37,6 +37,22 @@ public class BoardController {
 		return mv;
 	}
 
+	@GetMapping("myFundList")
+	public ModelAndView myFundList(SearchDto sDto, HttpSession session) {
+		log.info("myFundList()");
+		ModelAndView mv = tServ.getMyFundList(sDto, session);
+
+		return mv;
+	}
+
+	@GetMapping("allFundList")
+	public ModelAndView allFundList(SearchDto sDto, HttpSession session) {
+		log.info("allFundList()");
+		ModelAndView mv = tServ.getAllFundList(sDto, session);
+
+		return mv;
+	}
+
 	@GetMapping("fundWrite")
 	public String fundWrite(){
 		log.info("fundWrite()");
@@ -54,6 +70,34 @@ public class BoardController {
 		log.info("detailFund : {}", tnum);
 		mv=tServ.getFund(tnum, session, tDto);
 		return mv;
+	}
+
+	@GetMapping("deleteTripBoard")
+	public String deleteTripBoard(int tnum, HttpSession session, RedirectAttributes rttr){
+		log.info("deleteTripBoard()");
+		String view = tServ.deleteTripBoard(tnum, session, rttr);
+		return view;
+	}
+
+	@GetMapping("updateTripBoard")
+	public ModelAndView updateTripBoard(int tnum){
+		log.info("updateTripBoard()");
+		ModelAndView mv = tServ.updateTripBoard(tnum);
+		return mv;
+	}
+
+	@PostMapping("updateTripProc")
+	public String updateTripProc(List<MultipartFile> files, TripBoardDto tDto, HttpSession session, RedirectAttributes rttr){
+		log.info("updateTripProc()");
+		String view = tServ.updateTripBoard(files, tDto, session, rttr);
+		return view;
+	}
+
+	@GetMapping("updateStatus")
+	public String updateStatus(TripBoardDto tDto, HttpSession session, RedirectAttributes rttr){
+		log.info("updateStatus()");
+		String view = tServ.updateStatus(tDto, session, rttr);
+		return view;
 	}
 
 	//고객 센터 화면
@@ -114,22 +158,15 @@ public class BoardController {
 
 	//유적지 목록 화면
 	@GetMapping("hisList")
-	public ModelAndView hisList(ListDto ldto,HttpSession session){
-		log.info("boardList()");
+	public ModelAndView hisList(ListDto ldto,
+								HttpSession session){
+		log.info("hisList()");
 		ModelAndView mv = hServ.getHisList(ldto ,session);
 
 		return mv;
 	}
 
-	//	유적지 상세 보기
-	@GetMapping("hisDetail")
-	public ModelAndView historyDetail(int hisnum) {
-		log.info("historyDetail() : {}", hisnum);
-		ModelAndView mv = hServ.getHistory(hisnum);
-		return mv;
-	}
-
-	//	//유적지 정보 작성
+	//유적지 정보 작성
 	@GetMapping("hisWrite")
 	public String hisWrite() {
 		log.info("hisWrite()");
@@ -142,6 +179,40 @@ public class BoardController {
 							   RedirectAttributes rttr) {
 		log.info("hiswriteProc");
 		String view = hServ.hisWrite(files, hdto, session, rttr);
+		return view;
+	}
+
+	//	유적지 상세 보기
+	@GetMapping("hisDetail")
+	public ModelAndView hisDetail(int hisnum) {
+		log.info("hisDetail() : {}", hisnum);
+		ModelAndView mv = hServ.getHistory(hisnum);
+		return mv;
+	}
+
+	@GetMapping("hisDelete")
+	public String hisDelete(int hisnum,
+							HttpSession session,
+							RedirectAttributes rttr){
+		log.info("hisDelete()");
+		String view = hServ.deleteHis(hisnum, session, rttr);
+		return view;
+	}
+
+	@GetMapping("hisUpdate")
+	public ModelAndView hisUpdate(int hisnum) {
+		log.info("hisUpdate()");
+		ModelAndView mv = hServ.hisUpdate(hisnum);
+		return mv;
+	}
+
+	@PostMapping("hisupdateProc")
+	public String hisupdateProc(List<MultipartFile> files,
+								HistoryBoardDto hdto,
+								HttpSession session,
+								RedirectAttributes rttr){
+		log.info("hisupdateProc()");
+		String view = hServ.updateHis(files, hdto, session, rttr);
 		return view;
 	}
 }

@@ -10,6 +10,6 @@ public class SearchDto {
     private String keyword;
     private int pageNum = 1;
     private int listCnt = 5;
-    private String b_id;
+    private String mid;
     private int qnum;
 }
