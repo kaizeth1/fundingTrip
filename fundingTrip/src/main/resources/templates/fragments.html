@@ -11,12 +11,11 @@
 <div th:fragment="header(member)" class="bg-gray-100 py-4">
     <div class="container mx-auto flex justify-between items-center">
         <div>
-            <a th:href="@{index}" class="flex items-center py-4 px-2">
+            <a th:href="@{/}" class="flex items-center py-4 px-2">
                 <span class="header-logo text-blue-600 text-2xl">✈️ Funding Trip</span>
             </a>
         </div>
         <div class="hidden md:flex items-center space-x-1">
-            <a th:href="@{index}" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
             <a th:href="@{hisList?pageNum=1}" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
             <a th:href="@{fundList?pageNum=1}" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
             <th:block th:if="${member == null}">

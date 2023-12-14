@@ -9,6 +9,12 @@
         SET mname = #{mname}, mph = #{mph}, memail = #{memail}
         WHERE mid = #{mid}
     </update>
+    <update id="updatePw"
+            parameterType="String">
+        UPDATE member
+        SET mpw =#{mpw}
+        WHERE mid =#{mid}
+    </update>
     <delete id="drawMember" parameterType="String">
         DELETE FROM member
         WHERE mid = #{mid}

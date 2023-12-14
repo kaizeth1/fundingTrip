@@ -33,7 +33,7 @@
             <div class="w-full max-w-md">
                 <div class="bg-gray-200 h-64 mb-6 flex items-center justify-center">
                     <!-- Image placeholder -->
-                    <img src="https://via.placeholder.com/150" alt="Placeholder" class="object-cover">
+                    <img src="/images/스펀지밥.png" alt="Placeholder" class="object-cover">
                 </div>
                 <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <form th:action="@{loginProc}" method="post">
@@ -56,9 +56,7 @@
                         <a th:href="@{searchIdForm}" class="text-blue-500 hover:underline">아이디 찾기</a>
                     </div>
                     <div class="mt-2">
-                        <button class="text-blue-500 hover:underline" value="비밀번호찾기">
-                            비밀번호 찾기
-                        </button>
+                        <a th:href="@{send}" class="text-blue-500 hover:underline" >비밀번호 찾기</a>
                     </div>
                 </div>
             </div>
