@@ -26,11 +26,7 @@ public class BoardRestController {
     @Autowired
     private TripBoardService tServ;
 
-    @GetMapping("idCheck")
-    public String idCheck(String mid){
-        log.info("idCheck");
-        return mServ.idCheck(mid);
-    }
+
 
     @PostMapping("delTripFile")
     public List<TripBoardFileDto> delFile(TripBoardFileDto tFile, HttpSession session){

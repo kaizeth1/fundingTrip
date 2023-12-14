@@ -113,60 +113,6 @@ public class MemberService {
     }
 
 
-//    @Transactional
-//    public String updateMember(MemberDto member, HttpSession session, RedirectAttributes rttr) {
-//        log.info("UpdateMember()");
-//
-//        TransactionStatus status = manager.getTransaction(definition);
-//        String view = null;
-//        String msg = null;
-//        String mid = member.getMid();
-//        MemberDto sessionMember = (MemberDto) session.getAttribute("member");
-//
-//
-//
-//        log.info("세션에서 가져온 회원 정보: {}", sessionMember);
-//        log.info("mid: {}, sessionMember.getMid(): {}", mid, sessionMember.getMid());
-//        try {
-//            if ( mid == null ){
-//            //(sessionMember != null && Objects.equals(mid, sessionMember.getMid())) {
-//                // 세션에서 가져온 회원 정보의 mid와 전달된 mid가 일치하는지 확인
-//                // && mid.equals(sessionMember.getMid())
-//                member.setMid(mid); // mid 설정
-//                log.info("mDao.memberUpdate 호출 전");
-//                mDao.memberUpdate(member,session);
-//                log.info("mDao.memberUpdate 호출 후");
-//
-//                view = "redirect:/myPage?mid=" + mid;
-//                msg = "수정성공";
-//                log.info("수정 실행됨");
-//            } else {
-//                // 세션에 로그인 정보가 없거나 mid가 일치하지 않는 경우
-//                view = "redirect:/";
-//                msg = "수정 실패: 권한이 없습니다.";
-//                log.info("수정 실패: 권한이 없습니다.");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            view = "redirect:/";
-//            msg = "수정실패";
-//            log.info("수정실패");
-//        } finally {
-//            if (status != null && !status.isCompleted()) {
-//                if (status.isRollbackOnly()) {
-//                    manager.rollback(status);
-//                } else {
-//                    manager.commit(status);
-//                }
-//            }
-//        }
-//
-//        rttr.addFlashAttribute("msg", msg);
-//        return view;
-//    }
-
-
     public ModelAndView selMember(String mid) {
         log.info("updateMember");
         ModelAndView mv = new ModelAndView();
@@ -210,13 +156,31 @@ public class MemberService {
 
     public void updateMember(MemberDto member) {
         log.info("updateMember");
+
         mDao.memberUpdate(member);
+        log.info("내 정보 업데이트 성공");
 
     }
 
-    public String findIdByEmailAndName(String memail, String mname) {
+    //이메일 , 이름 이 일치하는 아이디 호출 메소드
+    public String checkSerch(String memail, String mname) {
         String foundId = mDao.serchId(memail, mname);
         return foundId;
+    }
+
+    public void updatePw(MemberDto member) {
+
+        log.info("pw 재설정 메소드");
+        log.info("변경할 비밀번호는"+member.getMpw());
+        //암호화된 비밀번호를 다시 dto 객체에 저장
+
+
+        //암호화된 비밀번호를 다시 dto 객체에 저장
+        String encPwd = pEncoder.encode(member.getMpw());
+        member.setMpw(encPwd);
+
+        mDao.updatePw(member);
+        log.info("pw update dao 연결");
     }
 }
 

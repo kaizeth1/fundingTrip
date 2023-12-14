@@ -18,4 +18,6 @@ public interface MemberDao {
     void memberUpdate(MemberDto member);
 
     String serchId(@Param("memail") String memail, @Param("mname") String mname);
+
+    void updatePw(MemberDto member);
 }

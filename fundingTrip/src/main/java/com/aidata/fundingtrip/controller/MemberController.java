@@ -1,20 +1,22 @@
 package com.aidata.fundingtrip.controller;
 
+import com.aidata.fundingtrip.dto.MailDto;
 import com.aidata.fundingtrip.dto.MemberDto;
 import com.aidata.fundingtrip.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Slf4j
+
 
 public class MemberController {
 	@Autowired
@@ -65,13 +67,19 @@ public class MemberController {
 		log.info("searchIdForm()");
 		return "searchIdForm";
 	}
+	@GetMapping("searchPwForm")
+	public String searchPwForm(String mid, Model model) {
+		log.info("searchPwForm()");
+		model.addAttribute("mid", mid);
+		return "searchPwForm";
+	}
 
 
 	//아이디 찾기 처리
-	@PostMapping("/serIdProc")
-	public String serIdProc(@RequestParam String memail, @RequestParam String mname, Model model) {
+	@PostMapping("/idSerch")
+	public String idSerch(@RequestParam String memail, @RequestParam String mname, Model model) {
 		// 이메일과 이름을 기반으로 아이디를 찾는 비즈니스 로직
-		String foundId = mServ.findIdByEmailAndName(memail, mname);
+		String foundId = mServ.checkSerch(memail, mname);
 
 		if (foundId != null) {
 			// 아이디를 찾은 경우
@@ -87,11 +95,10 @@ public class MemberController {
 
 
 	//비밀번호 찾기 화면
-	@GetMapping("searchPwForm")
-	public String searchPwForm(MemberDto member) {
-		log.info("searchPwForm()");
-
-		return "searchPwForm";
+	@GetMapping("send")
+	public String send(MemberDto member) {
+		log.info("send()");
+		return "send";
 	}
 
 	//비밀번호 찾기 처리
@@ -120,16 +127,11 @@ public class MemberController {
 	}
 
 	@PostMapping("updateProc")
-	public String updateProc(MemberDto member,
-							 HttpSession session) {
+	public String updateProc(MemberDto member) {
 		log.info("updateProc");
-
-		//String sessionId = (String) session.getAttribute("mid"); // 세션에서 아이디 가져오기
-
 		mServ.updateMember(member);
-
-
 		return "redirect:/myPage";
+
 	}
 
 
@@ -143,12 +145,20 @@ public class MemberController {
 		if ("success".equals(result)) {
 			// 성공한 경우 로그아웃 후 메인 페이지로 리다이렉트 또는 다른 경로 설정
 			session.invalidate(); // 세션 무효화 (로그아웃)
+
 			return "redirect:/";
 		} else {
 			// 실패한 경우 마이페이지로 리다이렉트 또는 다른 경로 설정
 			return "redirect:/myPage";
 		}
 	}
+	@PostMapping("/updatePw")
+	public String updatePw(MemberDto member){
+		log.info("updatePw()");
+		mServ.updatePw(member);
+		return "redirect:/loginForm";
+	}
+
 
 }
 

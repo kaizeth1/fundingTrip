@@ -161,6 +161,10 @@ public class HistoryService {
         for (MultipartFile mf : files) {
             //파일명(원래 이름) 추출
             String oriname = mf.getOriginalFilename();
+            String ex = oriname.substring(oriname.lastIndexOf("."));
+            ex = ex.toUpperCase();
+            oriname = oriname.substring(0, oriname.lastIndexOf(".")) + ex;
+
             if (oriname.equals("")) {
                 return;//업로드할 파일 없음. 파일 저장 작업 종료.
             }
@@ -268,12 +272,11 @@ public class HistoryService {
         HistoryBoardDto hdto = hDao.selectHistory(hisnum);
         //파일목록 가져오기
         List<HisFileDto> hfList = hDao.selectFileList(hisnum);
-        //hisfile 목록 가져옥;
-//        List<HisFileDto> hfList = hDao.selectHisFileList(hisnum);
+
         //mv에 담기
         mv.addObject("hdto", hdto);
         mv.addObject("hfList", hfList);
-//        mv.addObject("hfList", hfList);
+
         //템플릿 지정.
         mv.setViewName("hisUpdate");
         return mv;
