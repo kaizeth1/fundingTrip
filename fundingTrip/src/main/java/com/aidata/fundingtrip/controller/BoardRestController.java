@@ -1,9 +1,11 @@
 package com.aidata.fundingtrip.controller;
 
 import com.aidata.fundingtrip.dto.HisFileDto;
+import com.aidata.fundingtrip.dto.QnAReplyDto;
 import com.aidata.fundingtrip.dto.TripBoardFileDto;
 import com.aidata.fundingtrip.dto.TripReplyDto;
 import com.aidata.fundingtrip.service.HistoryService;
+import com.aidata.fundingtrip.service.QnABoardService;
 import com.aidata.fundingtrip.service.TripBoardService;
 import com.aidata.fundingtrip.service.MemberService;
 import jakarta.servlet.http.HttpSession;
@@ -22,14 +24,14 @@ public class BoardRestController {
     @Autowired
     private HistoryService hServ;
     @Autowired
-    private MemberService mServ;
-    @Autowired
     private TripBoardService tServ;
+    @Autowired
+    private QnABoardService qServ;
 
 
 
     @PostMapping("delTripFile")
-    public List<TripBoardFileDto> delFile(TripBoardFileDto tFile, HttpSession session){
+    public List<TripBoardFileDto> delTripFile(TripBoardFileDto tFile, HttpSession session){
         log.info("delTripFile()");
         List<TripBoardFileDto> fList = tServ.delFile(tFile, session);
         return fList;
@@ -48,5 +50,13 @@ public class BoardRestController {
         log.info("delFile()");
         List<HisFileDto> fList = hServ.delFile(hFile, session);
         return fList;
+    }
+
+    //댓글 작성 처리
+    @PostMapping("QnAReplyInsert")
+    public QnAReplyDto QnAReplyInsert(QnAReplyDto qrDto) {
+        log.info("replyInsert()");
+        qrDto = qServ.QnAReplyInsert(qrDto);
+        return qrDto;
     }
 }

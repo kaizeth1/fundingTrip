@@ -37,6 +37,7 @@ public class BoardController {
 		return mv;
 	}
 
+	//내가 쓴 글 모록
 	@GetMapping("myFundList")
 	public ModelAndView myFundList(SearchDto sDto, HttpSession session) {
 		log.info("myFundList()");
@@ -45,6 +46,7 @@ public class BoardController {
 		return mv;
 	}
 
+	// 모든 펀딩 글 목록(관리자용)
 	@GetMapping("allFundList")
 	public ModelAndView allFundList(SearchDto sDto, HttpSession session) {
 		log.info("allFundList()");

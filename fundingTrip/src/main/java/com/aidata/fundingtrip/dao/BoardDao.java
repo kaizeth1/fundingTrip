@@ -66,4 +66,6 @@ public interface BoardDao {
     List<TripBoardDto> selectAllTripBoardList(SearchDto sDto);//전체 글의 리스트만 나오는 메소드
 
     int selectAllTripBoardCnt(SearchDto sDto);//전체 게시글 개수 구하는 메소드
+
+    int getTcashFromTboard(int tnum);
 }

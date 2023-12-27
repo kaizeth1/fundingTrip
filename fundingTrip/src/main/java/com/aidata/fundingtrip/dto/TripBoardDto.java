@@ -14,4 +14,5 @@ public class TripBoardDto {
     private String tstart;
     private String tend;
     private String tstatus;
+    private int tcash;
 }

@@ -10,10 +10,10 @@ public class HistoryBoardDto {
     private int hisnum;
     private String hisname;
     private String hisloca;
-    private String hispic;
     private String hisexplan;
     private String hisinfo;
-    private String hissysname;
+    private String hislatt;
+    private String hislongt;
 
     private List<HisFileDto> hisFileList;
 }

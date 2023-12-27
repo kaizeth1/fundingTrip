@@ -22,6 +22,16 @@ public class MemberController {
 	@Autowired
 	private MemberService mServ;
 
+
+	@GetMapping("kakaoMyPage")
+	public String kakaoMyPage(@RequestParam(name = "pg_token") String pgToken,
+							  HttpSession session, Model model){
+		log.info("kakaoMyPage()");
+		String mid = ((MemberDto)session.getAttribute("member")).getMid();
+		model.addAttribute("mid", mid);
+		return "myPage";
+	}
+
 	//첫 화면
 	@GetMapping("/")
 	public String home() {
