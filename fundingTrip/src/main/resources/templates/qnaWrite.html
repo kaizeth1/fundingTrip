@@ -90,11 +90,10 @@
 					<button type="button"
 							class="form-button inline-flex items-center px-4 py-2 border border-gray-300 text-sm
 							font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50
-							focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+							focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="backbtn">
 						뒤로가기
 					</button>
 				</div>
-
 			</form>
 		</div>
 	</div>
@@ -105,25 +104,25 @@
 </footer>
 </body>
 <script th:inline="javascript">
-    // $("#backbtn").click(function () {
-    //     let url = "/qnaList?";
-    //     const searchDto = [[${session.search}]];
-    //     let colname = "";
-    //     let keyword = "";
-	//
-    //     if (searchDto != null) {
-    //         colname = searchDto.colname;
-    //         keyword = searchDto.keyword;
-    //     }
-	//
-    //     let page = [[${session.pageNum}]]
-    //     if (colname == null || colname == "")
-    //         url += `pageNum=[[${session.pageNum}]]`;//검색 안한 목록 이동
-    //     else
-    //         url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`//검색 결과 목록으로 이동
-	//
-    //     console.log(url);
-    //     location.href = url;
-    // });
+    $("#backbtn").click(function () {
+        let url = "/qnaList?";
+        const searchDto = [[${session.search}]];
+        let colname = "";
+        let keyword = "";
+
+        if (searchDto != null) {
+            colname = searchDto.colname;
+            keyword = searchDto.keyword;
+        }
+
+        let page = [[${session.pageNum}]]
+        if (colname == null || colname == "")
+            url += `pageNum=[[${session.pageNum}]]`;//검색 안한 목록 이동
+        else
+            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`//검색 결과 목록으로 이동
+
+        console.log(url);
+        location.href = url;
+    });
 </script>
 </html>

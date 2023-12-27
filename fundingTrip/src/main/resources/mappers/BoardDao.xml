@@ -20,7 +20,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         INSERT INTO tboard
-        VALUES (NULL, #{tmid}, #{ttitle}, #{tcontents}, #{tpeople}, #{tstart}, #{tend}, default)
+        VALUES (NULL, #{tmid}, #{ttitle}, #{tcontents}, #{tpeople}, #{tstart}, #{tend}, default,#{tcash})
     </insert>
 
     <insert id="insertFundFile" parameterType="com.aidata.fundingtrip.dto.TripBoardFileDto">
@@ -41,7 +41,7 @@
         WHERE qnum = #{qnum}
     </update>
     <update id="updateTripBoard" parameterType="com.aidata.fundingtrip.dto.TripBoardDto">
-        UPDATE tboard SET ttitle=#{ttitle},tcontents=#{tcontents}, tpeople=#{tpeople}, tstart=#{tstart}, tend=#{tend} WHERE tnum=#{tnum}
+        UPDATE tboard SET ttitle=#{ttitle},tcontents=#{tcontents}, tpeople=#{tpeople}, tstart=#{tstart},tend=#{tend},tcash=#{tcash}  WHERE tnum=#{tnum}
     </update>
 
     <update id="updateStatus" parameterType="com.aidata.fundingtrip.dto.TripBoardDto">
@@ -162,5 +162,10 @@
         <if test="colname != null and colname != ''">
             WHERE ${colname} LIKE concat('%',#{keyword},'%')
         </if>
+    </select>
+    <select id="getTcashFromTboard" resultType="int" parameterType="Integer">
+        SELECT tcash
+        FROM tboard
+        WHERE tnum = #{tnum}
     </select>
 </mapper>

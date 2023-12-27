@@ -74,18 +74,10 @@
 			</div>
 
 			<!--글 수정, 삭제, 뒤로가기 버튼-->
-			<div class="flex items-center justify-between">
-				<button type="button" class="btn-write" id="upbtn">
-					수정
-				</button>
-
-				<button type="button" class="btn-write" id="delbtn">
-					삭제
-				</button>
-
-				<button type="button" class="btn-sub" id="backbtn">
-					뒤로가기
-				</button>
+			<div class="btn-area">
+				<button class="btn-write" id="upbtn">수정</button>
+				<button class="btn-write" id="delbtn">삭제</button>
+				<button class="btn-sub" id="backbtn">뒤로가기</button>
 			</div>
 
 			<div><!--댓글(답변) 전송-->
@@ -98,14 +90,13 @@
 						   style="width: 100%; margin-bottom: 30px">
 				</form>
 
-				<div id="qrSpace">
+				<div id="qrSpace"><!--댓글(답변) 목록-->
 					<h2>답변</h2>
 					<th:block th:unless="${#lists.isEmpty(qrDto)}">
 						<th:block th:each="qritem:${qrDto}">
 							<div class="t_contents p-20 re" th:text="${qritem.qrmid}"></div>
 							<div class="t_contents p-50 re" th:text="${qritem.qrcontents}"></div>
 							<div class="t_contents p-30 re" th:text="${qritem.qrdate}"></div>
-
 						</th:block>
 					</th:block>
 				</div>
@@ -130,24 +121,29 @@
 
     $("#backbtn").click(function () {
         let url = "/qnaList?";
-
-        const searchDto = [[${session.search}]]
+        const searchDto = [[${session.search}]];
         let colname = "";
         let keyword = "";
+
         if (searchDto != null) {
             colname = searchDto.colname;
             keyword = searchDto.keyword;
         }
 
-        let page = [[${session.pageNum}]];
+        let page = [[${session.pageNum}]]
+        if (colname == null || colname == "")
+            url += `pageNum=[[${session.pageNum}]]`;//검색 안한 목록 이동
+        else
+            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`//검색 결과 목록으로 이동
 
-        if (colname == null || colname == "") {//검색 안한 목록 이동
-            url += `pageNum=${page}`;
-        } else {
-            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`;
-        }
         console.log(url);
         location.href = url;
+    });
+
+    //수정 페이지 이동
+    $("#upbtn").click(function () {
+        let qnum = [[${qDto.qnum}]];
+        location.href = `/qnaUpdate?qnum=${qnum}`;
     });
 
     //삭제 처리
@@ -155,14 +151,8 @@
         let con = confirm("게시글을 삭제합니다.");
         if (con == true) {
             let qnum = [[${qDto.qnum}]];
-            location.href = `/qnaDelete?qnum=${qnum}`;
+            location.href = `/qnaBoardDelete?qnum=${qnum}`;
         }
-
-    });
-
-    $("#upbtn").click(function () {
-        let qnum = [[${qDto.qnum}]];
-        location.href = `/qnaUpdate?qnum=${qnum}`;
     });
 
     //댓글 전송 및 처리
@@ -186,7 +176,7 @@
                     $("#comment").val("");
                     alert("답변 저장 성공");
                 } else {
-                    //alert("답변 저장 실패");
+                    alert("답변 저장 실패");
                     $("#comment").val("");
                     $("#comment").focus();
                 }

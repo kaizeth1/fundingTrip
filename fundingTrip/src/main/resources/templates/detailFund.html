@@ -13,11 +13,6 @@
 <header th:insert="~{fragments::header(${session.member})}"></header>
 <div class="container mx-auto my-8">
     <div class="bg-white p-8 rounded shadow-md">
-        <div class="mb-4">
-            <div th:object="${session.member}" class="text-gray-700">
-                <p th:text="'등급['+*{mgrade}+']'"></p>
-            </div>
-        </div>
         <h2 class="text-2xl font-bold mb-4" th:text="${tDto.ttitle}"></h2>
         <div class="detail-content">
             <div th:if="${#lists.isEmpty(tfList)}" class="text-gray-500">첨부된 파일이 없습니다.</div>
@@ -32,8 +27,6 @@
         </div>
         <!-- 글 정보 표시 -->
         <div class="mb-4 grid grid-cols-2 gap-4">
-            <div class="t_content">NUM</div>
-            <div class="d_content" th:text="${tDto.tnum}"></div>
             <div class="t_content">승인 여부</div>
             <div class="d_content" th:text="${tDto.tstatus}"></div>
             <div class="t_content">작성자</div>
@@ -42,11 +35,12 @@
             <div class="d_content" th:text="${tDto.tstart}"></div>
             <div class="t_content">마지막일</div>
             <div class="d_content" th:text="${tDto.tend}"></div>
-        </div>
-        <div class="mb-4">
+            <div class="t_content">결제 금액</div>
+            <div class="d_content" th:text="${tDto.tcash}"></div>
             <div class="t_content">펀딩 인원</div>
             <div class="d_content" th:text="${tDto.tpeople}"></div>
         </div>
+
         <div class="mb-4">
             <div class="t_content content_h">CONTENTS</div>
             <div class="d_content content_h" th:text="${tDto.tcontents}"></div>
@@ -58,6 +52,7 @@
             <button id="backbtn" class="btn-sub mr-2">뒤로</button>
             <button id="okbtn" class="btn-write mr-2">승인</button>
             <button id="ccbtn" class="btn-write">거부</button>
+            <button id="paybtn" class="btn-sub float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">결제</button>
         </div>
         <!-- 댓글 입력 폼 -->
         <form id="rform" class="mb-4">
@@ -184,6 +179,20 @@
             let tnum = [[${tDto.tnum}]];
             location.href=`/updateStatus?tstatus=거부&tnum=${tnum}`;
         }
+    });
+    $('#paybtn').click(function (){
+        var tnum = [[${tDto.tnum}]];  // 현재 페이지의 tnum 값을 가져오기
+        $.ajax({
+            url:'/jq/kakaopay.cls?tnum=' + tnum,
+            dataType:'json',
+            success:function (data){
+                var box = data.next_redirect_pc_url;
+                window.open(box);
+            },
+            error:function (error){
+                alert(error);
+            }
+        });
     });
 </script>
 </html>

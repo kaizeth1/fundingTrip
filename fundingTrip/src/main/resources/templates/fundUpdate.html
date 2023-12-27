@@ -67,13 +67,10 @@
             </div>
 
             <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">작성완료</button>
-            <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">돌아가기</button>
+            <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50" id="backbtn">돌아가기</button>
         </form>
     </div>
 </div>
-<script>
-    // JavaScript if needed
-</script>
 </body>
 <script th:inline="javascript">
     // 뒤로 가기 버튼 클릭 시 실행되는 함수
@@ -99,35 +96,35 @@
         $(".upload-name").val(fileName);
     });
     // 파일 삭제 함수
-    function del(sysname) {
-        console.log(sysname);
-        let cfn = confirm("해당 파일을 삭제하시겠습니까?");
+    function del(tsysname) {
+        console.log(tsysname);
+        let cfn = confirm("해당 파일을 삭제학시겠습니까?");
         if (cfn == false){
             return;// 취소.
         }
         // 삭제할 파일 정보 전송
-        let sendObj = {"tsysname" : sysname};
-        sendObj.tftnum = [[${tDto.tnum}]];
+        let sendObj = {"tsysname" : tsysname};
+        sendObj.bf_bnum = [[${tDto.tnum}]];
         console.log(sendObj);
 
         // Ajax를 통한 파일 삭제 요청
         $.ajax({
-            url: "delFile",
+            url: "delTripFile",
             type: "post",
             data: sendObj,
             success: function (res){
                 console.log(res.length);
                 //res.length == 0, res.length > 0
-                let tlist = "";
+                let flist = "";
                 if (res.length == 0){
-                    tlist += '<label style="width: 100%">첨부 파일 없음</label>'
+                    flist += '<label style="width: 100%">첨부 파일 없음</label>'
                 }else {
                     for (let f of res){
-                        tlist += `<label style="width: 100%" onclick="del('${f.tsysname}')">${f.toriname}</label>`
+                        flist += `<label style="width: 100%" onclick="del('${f.tsysname}')">${f.toriname}</label>`
                     }
                 }
                 // 파일 목록 업데이트
-                $("#bfile").html(tlist);
+                $("#bfile").html(flist);
             },
             error: function (err){
                 console.log(err);

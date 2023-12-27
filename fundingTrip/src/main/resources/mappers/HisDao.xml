@@ -7,8 +7,8 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         INSERT INTO hisboard
-        (hisname, hisloca, hisexplan, hisinfo)
-        VALUES (#{hisname}, #{hisloca}, #{hisexplan}, #{hisinfo})
+        (hisname, hisloca, hisexplan, hisinfo, hislatt, hislongt)
+        VALUES (#{hisname}, #{hisloca}, #{hisexplan}, #{hisinfo}, #{hislatt}, #{hislongt})
     </insert>
     <insert id="historyFile" keyProperty="hf_num" useGeneratedKeys="true" parameterType="com.aidata.fundingtrip.dto.HisFileDto">
         INSERT INTO HISFILE (hF_hisnum, hF_ORINAME, hF_SYSNAME)
@@ -16,7 +16,7 @@
     </insert>
     <update id="updateHis" parameterType="com.aidata.fundingtrip.dto.HistoryBoardDto">
         UPDATE hisboard
-        SET hisname=#{hisname},hisexplan=#{hisexplan},hisinfo=#{hisinfo}
+        SET hisname=#{hisname},hisexplan=#{hisexplan},hisinfo=#{hisinfo},hislatt=#{hislatt},hislongt=#{hislongt}
         WHERE hisnum=#{hisnum}
     </update>
     <delete id="deleteHis" parameterType="Integer">
