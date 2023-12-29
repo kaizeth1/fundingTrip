@@ -166,7 +166,7 @@
             data: qrForm,
             success: function (res) {
                 console.log(res);
-                if (res == "ok") {
+                if (res != null) {
                     let str = "";
                     str += `
 					<div class="t_content p-20 re">${res.qrmid}</div>
@@ -192,7 +192,7 @@
     $("#qrForm").hide();
     let m = [[${session.member}]];
     if (m != null) {
-        let mgrade = m.mname; // 등급이 관리자인 사람만 보인다
+        let mgrade = m.mgrade; // 등급이 관리자인 사람만 보인다
         if (mgrade == '관리자') {
             $("#qrForm").show();
         }
