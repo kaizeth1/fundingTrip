@@ -67,7 +67,7 @@
             <th:block th:each="ritem:${trList}">
                 <div class="t_content p-20 re" th:text="${ritem.trmid}"></div>
                 <div class="d_content p-50 re" th:text="${ritem.trcontents}"></div>
-                <div class="d_content p-30 re" th:text="${ritem.trdate}"></div>
+                <div class="d_content p-30 re" th:text="${#dates.format(ritem.trdate, 'yyyy-MM-dd HH:mm:ss')}"></div>
             </th:block>
         </div>
     </div>

@@ -12,7 +12,7 @@
         <selectKey keyProperty="qrnum" resultType="Integer" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO qreply VALUES (null, #{qrbnum}, #{qrmid}, #{qrcontents}, default)
+        INSERT INTO qreply VALUES(null, #{qrbnum}, #{qrmid}, #{qrcontents}, default)
     </insert>
 
     <insert id="insertFundBoard" parameterType="com.aidata.fundingtrip.dto.TripBoardDto" useGeneratedKeys="true" keyProperty="tnum">
@@ -27,7 +27,6 @@
         INSERT INTO tboardfile
         VALUES (NULL,#{tftnum},#{toriname},#{tsysname})
     </insert>
-
     <insert id="insertTreply" parameterType="com.aidata.fundingtrip.dto.TripReplyDto" useGeneratedKeys="true" keyProperty="trnum">
         <selectKey keyProperty="trnum" resultType="Integer" order="AFTER">
             SELECT LAST_INSERT_ID()

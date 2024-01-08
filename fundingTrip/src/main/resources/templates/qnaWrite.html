@@ -53,7 +53,7 @@
 			<form th:action="@{qnaWriteProc}" id="complaintForm" class="space-y-4" method="post" enctype="multipart/form-data">
 				<div>
 					<input type="hidden" name="qmid" th:value="${session.member.mid}">
-					<label for="title" class="block text-sm font-medium text-gray-700" id="qtitle">제목</label>
+					<label for="title" class="block text-sm font-medium text-gray-700" >제목</label>
 					<div class="mt-1 flex rounded-md shadow-sm">
 						<input type="text" name="qtitle" id="title"
 							   class="form-input flex-1 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300"
