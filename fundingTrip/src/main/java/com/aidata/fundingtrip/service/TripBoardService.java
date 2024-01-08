@@ -99,7 +99,7 @@ public class TripBoardService {
             fundFileUpload(files, session, tDto.getTnum());
 
             manager.commit(status);//최종승인
-            view = "redirect:fundList?pageNum=1";
+            view = "redirect:myFundList?pageNum=1";
             msg = "작성 완료";
 
         }catch (Exception e){
@@ -188,7 +188,7 @@ public class TripBoardService {
 
             manager.commit(status);
 
-            view = "redirect:fundList?pageNum=1";
+            view = "redirect:myFundList?pageNum=1";
             msg = "삭제 성공";
         }catch (Exception e){
             e.printStackTrace();
